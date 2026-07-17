@@ -8,7 +8,10 @@
         "description": "nova area",
         "price": 50.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-01",
+        "label": "nova area",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -101,7 +104,10 @@
         "description": "",
         "price": 45.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-02",
+        "label": "Área R$45,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -202,7 +208,10 @@
         "description": "",
         "price": 30.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-03",
+        "label": "Área 30,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -307,7 +316,10 @@
         "description": "",
         "price": 44.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-04",
+        "label": "Área R$44,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -452,7 +464,10 @@
         "description": "",
         "price": 40.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-05",
+        "label": "Área R$40,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -569,7 +584,10 @@
         "description": "",
         "price": 40.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-06",
+        "label": "Área R$40,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -730,7 +748,10 @@
         "description": "",
         "price": 38.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-07",
+        "label": "Área R$38,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -843,7 +864,10 @@
         "description": "Destino casa",
         "price": 37.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-08",
+        "label": "Destino casa",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1044,7 +1068,10 @@
         "description": "Região Preta +/- 10 ~ 15 km",
         "price": 33.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-09",
+        "label": "Região Preta +/- 10 ~ 15 km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1301,7 +1328,10 @@
         "description": "Destino casa",
         "price": 30.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-10",
+        "label": "Destino casa",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1454,7 +1484,10 @@
         "description": "",
         "price": 29.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-11",
+        "label": "Área R$29,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1607,7 +1640,10 @@
         "description": "",
         "price": 28.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-12",
+        "label": "Área R$28,00",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1696,7 +1732,10 @@
         "description": "Destino casa",
         "price": 26.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-13",
+        "label": "Destino casa",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1833,7 +1872,10 @@
         "description": "Região Oliva 9 Km",
         "price": 24.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-14",
+        "label": "Região Oliva 9 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1986,7 +2028,10 @@
         "description": "Região azul 1 7 Km",
         "price": 22.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-15",
+        "label": "Região azul 1 7 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2099,7 +2144,10 @@
         "description": "Região Verde Limão 6 5 Km",
         "price": 20.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-16",
+        "label": "Região Verde Limão 6 5 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2224,7 +2272,10 @@
         "description": "Região Extremo Leste",
         "price": 18.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-17",
+        "label": "Região Extremo Leste",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2353,7 +2404,10 @@
         "description": "Região verde 5 4 Km",
         "price": 18.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-18",
+        "label": "Região verde 5 4 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2450,7 +2504,10 @@
         "description": "Região verde 4 3 Km",
         "price": 16.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-19",
+        "label": "Região verde 4 3 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2563,7 +2620,10 @@
         "description": "Região verde 3 2 Km",
         "price": 16.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-20",
+        "label": "Região verde 3 2 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2680,7 +2740,10 @@
         "description": "Região verde 2 1.5 Km",
         "price": 14.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-21",
+        "label": "Região verde 2 1.5 Km",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2793,7 +2856,10 @@
         "description": "..Região verde 1 1 KM",
         "price": 14.0,
         "risk": false,
-        "service": true
+        "service": true,
+        "id": "area-22",
+        "label": "Região verde 1 1 KM",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2894,7 +2960,10 @@
         "description": "Área de Risco",
         "price": null,
         "risk": true,
-        "service": false
+        "service": false,
+        "id": "area-23",
+        "label": "OBS (Área de Risco) 1 não atendemos",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2959,7 +3028,10 @@
         "description": "Área de Risco",
         "price": null,
         "risk": true,
-        "service": false
+        "service": false,
+        "id": "area-24",
+        "label": "OBS (Área de Risco) 2 não atendemos",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3108,7 +3180,10 @@
         "description": "",
         "price": null,
         "risk": true,
-        "service": false
+        "service": false,
+        "id": "area-25",
+        "label": "OBS (Área de Risco) 3 não atendemos",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3189,7 +3264,10 @@
         "description": "",
         "price": null,
         "risk": false,
-        "service": false
+        "service": false,
+        "id": "area-26",
+        "label": "Área Shirley Karintô",
+        "active": true
       },
       "geometry": {
         "type": "Polygon",
