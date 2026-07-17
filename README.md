@@ -1,30 +1,24 @@
-# Área de Entregas — Produto Yuba
+# Área de Entregas – Produtos Yuba — versão 0.4
 
-Projeto completo das Fases 1 e 2:
+Aplicação estática em HTML, CSS e JavaScript.
 
-- **Fase 1:** aplicação web responsiva/PWA para consultar frete, salvar histórico/favoritos e editar preços localmente.
-- **Fase 2:** aplicativo Android nativo que incorpora a mesma aplicação web, com geração automática do APK pelo GitHub Actions.
+## Publicação no GitHub
 
-## Publicar sem instalar programas
+1. Extraia o ZIP.
+2. Envie **o conteúdo da pasta** para a raiz do repositório:
+   - `index.html`
+   - pasta `css`
+   - pasta `js`
+   - pasta `dados`
+3. Substitua os arquivos existentes.
+4. Faça o commit.
+5. Aguarde o GitHub Pages publicar a atualização.
+6. Atualize o site com `Ctrl + F5`.
 
-1. Envie todos os arquivos deste projeto para o repositório GitHub.
-2. No GitHub, abra **Settings → Pages → Source** e escolha **GitHub Actions**.
-3. Abra **Actions**, execute **Publicar site**. O endereço do site aparecerá no resultado.
-4. Abra **Actions**, execute **Gerar APK Android**. Ao terminar, baixe o arquivo em **Artifacts → Entregas-Yuba-APK**.
+## Funcionamento
 
-## Administração
-
-PIN inicial: `2468`.
-
-Os preços editados são armazenados apenas no aparelho/navegador. Use **Exportar JSON** para backup. Para sincronização entre vários aparelhos será necessária uma etapa futura com servidor/banco de dados.
-
-## Desenvolvimento opcional
-
-```bash
-npm test
-npx serve web
-```
-
-## Dados
-
-Os polígonos e preços iniciais vieram do KMZ fornecido pelo proprietário do mapa. O motor geométrico funciona localmente. A pesquisa de endereço usa o serviço público Nominatim/OpenStreetMap e deve ser usada em baixo volume, com atribuição mantida.
+- Converte o endereço em latitude/longitude usando Nominatim/OpenStreetMap.
+- Carrega 26 polígonos extraídos do KMZ fornecido.
+- Prioriza as áreas de risco.
+- Em polígonos sobrepostos, usa a menor área, correspondente à zona mais específica.
+- Mostra o frete real cadastrado no nome do polígono.
