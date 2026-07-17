@@ -1,24 +1,13 @@
-# Área de Entregas – Produtos Yuba — versão 0.4
+# Área de Entregas – Produtos Yuba — versão 0.5
 
-Aplicação estática em HTML, CSS e JavaScript.
+Novidades:
+- painel administrativo em `admin.html`;
+- edição local de nomes, preços e status;
+- distância estimada desde o Centro de Distribuição;
+- tempo estimado;
+- apresentação profissional das regiões;
+- rota com origem no Centro de Distribuição.
 
-## Publicação no GitHub
+Publique todo o conteúdo do ZIP na raiz do repositório e substitua os arquivos anteriores.
 
-1. Extraia o ZIP.
-2. Envie **o conteúdo da pasta** para a raiz do repositório:
-   - `index.html`
-   - pasta `css`
-   - pasta `js`
-   - pasta `dados`
-3. Substitua os arquivos existentes.
-4. Faça o commit.
-5. Aguarde o GitHub Pages publicar a atualização.
-6. Atualize o site com `Ctrl + F5`.
-
-## Funcionamento
-
-- Converte o endereço em latitude/longitude usando Nominatim/OpenStreetMap.
-- Carrega 26 polígonos extraídos do KMZ fornecido.
-- Prioriza as áreas de risco.
-- Em polígonos sobrepostos, usa a menor área, correspondente à zona mais específica.
-- Mostra o frete real cadastrado no nome do polígono.
+Importante: como o GitHub Pages não possui banco de dados, as alterações do painel ficam somente no navegador/aparelho usado. Para alterações compartilhadas por todos os clientes, será necessária uma integração futura com Firebase ou Supabase.
