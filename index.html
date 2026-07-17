@@ -3,81 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Consulte a disponibilidade e o valor do frete da Produtos Yuba.">
+  <meta name="description" content="Consulte a disponibilidade, distância e valor do frete da Produtos Yuba.">
   <title>Área de Entregas | Produtos Yuba</title>
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
   <main class="app">
     <header class="cabecalho">
-      <div class="logo" aria-hidden="true">🦜</div>
-      <div>
-        <h1>Área de Entregas</h1>
-        <p>Produtos Yuba</p>
+      <div class="marca">
+        <div class="logo" aria-hidden="true">🦜</div>
+        <div><h1>Área de Entregas</h1><p>Produtos Yuba</p></div>
       </div>
+      <a class="link-admin" href="admin.html">⚙️ Administrar</a>
     </header>
 
-    <section class="consulta" aria-labelledby="titulo-consulta">
-      <h2 id="titulo-consulta">Consulte seu endereço</h2>
+    <section class="consulta">
+      <h2>Consulte seu endereço</h2>
       <label for="endereco">Endereço completo</label>
-      <input
-        id="endereco"
-        type="search"
-        autocomplete="street-address"
-        placeholder="Rua, número, bairro, cidade e estado"
-      >
-
+      <input id="endereco" type="search" autocomplete="street-address"
+        placeholder="Rua, número, bairro, cidade e estado">
       <div class="acoes">
-        <button id="gps" class="botao botao-secundario" type="button">
-          📍 Minha localização
-        </button>
-        <button id="buscar" class="botao botao-principal" type="button">
-          🚚 Calcular frete
-        </button>
+        <button id="gps" class="botao botao-secundario" type="button">📍 Minha localização</button>
+        <button id="buscar" class="botao botao-principal" type="button">🚚 Calcular frete</button>
       </div>
-
       <p id="status" class="status" role="status" aria-live="polite"></p>
     </section>
 
-    <section id="resultado" class="resultado oculto" aria-labelledby="titulo-resultado">
+    <section id="resultado" class="resultado oculto">
       <div class="resultado-topo">
-        <div>
-          <p id="situacao" class="etiqueta">Resultado</p>
-          <h2 id="titulo-resultado">Consulta de entrega</h2>
-        </div>
-        <span id="icone-resultado" class="icone-resultado" aria-hidden="true">✓</span>
+        <div><p id="situacao" class="etiqueta">Resultado</p><h2 id="titulo-resultado">Consulta de entrega</h2></div>
+        <span id="icone-resultado" class="icone-resultado">✓</span>
       </div>
-
       <dl class="grade-resultado">
-        <div>
-          <dt>Frete</dt>
-          <dd id="frete">--</dd>
-        </div>
-        <div>
-          <dt>Área</dt>
-          <dd id="regiao">--</dd>
-        </div>
-        <div>
-          <dt>Referência</dt>
-          <dd id="distancia">--</dd>
-        </div>
-        <div>
-          <dt>Coordenadas</dt>
-          <dd id="tempo">--</dd>
-        </div>
+        <div><dt>Frete</dt><dd id="frete">--</dd></div>
+        <div><dt>Região</dt><dd id="regiao">--</dd></div>
+        <div><dt>Distância estimada</dt><dd id="distancia">--</dd></div>
+        <div><dt>Tempo estimado</dt><dd id="tempo">--</dd></div>
       </dl>
-
-      <button id="rota" class="botao botao-rota" type="button">
-        🗺️ Abrir rota no Google Maps
-      </button>
+      <p id="observacao" class="observacao"></p>
+      <button id="rota" class="botao botao-rota" type="button">🗺️ Abrir rota no Google Maps</button>
     </section>
 
-    <footer>
-      <span>Versão 0.4</span>
-      <span>Dados cartográficos: OpenStreetMap</span>
-    </footer>
+    <footer><span>Versão 0.5</span><span>Dados cartográficos: OpenStreetMap</span></footer>
   </main>
-
-  <script src="js/app.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>
