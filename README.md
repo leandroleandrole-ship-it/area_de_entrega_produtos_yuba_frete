@@ -1,38 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+# Área de Entregas — Produto Yuba
 
-<title>Área de Entregas - Produto Yuba</title>
+Projeto completo das Fases 1 e 2:
 
-<link rel="stylesheet" href="style.css">
-</head>
+- **Fase 1:** aplicação web responsiva/PWA para consultar frete, salvar histórico/favoritos e editar preços localmente.
+- **Fase 2:** aplicativo Android nativo que incorpora a mesma aplicação web, com geração automática do APK pelo GitHub Actions.
 
-<body>
+## Publicar sem instalar programas
 
-<div class="container">
+1. Envie todos os arquivos deste projeto para o repositório GitHub.
+2. No GitHub, abra **Settings → Pages → Source** e escolha **GitHub Actions**.
+3. Abra **Actions**, execute **Publicar site**. O endereço do site aparecerá no resultado.
+4. Abra **Actions**, execute **Gerar APK Android**. Ao terminar, baixe o arquivo em **Artifacts → Entregas-Yuba-APK**.
 
-<img src="logo.png" class="logo">
+## Administração
 
-<h1>Área de Entregas</h1>
+PIN inicial: `2468`.
 
-<h2>Produto Yuba</h2>
+Os preços editados são armazenados apenas no aparelho/navegador. Use **Exportar JSON** para backup. Para sincronização entre vários aparelhos será necessária uma etapa futura com servidor/banco de dados.
 
-<input
-id="endereco"
-type="text"
-placeholder="Digite seu endereço">
+## Desenvolvimento opcional
 
-<button onclick="calcular()">
-Calcular Frete
-</button>
+```bash
+npm test
+npx serve web
+```
 
-<div id="resultado"></div>
+## Dados
 
-</div>
-
-<script src="app.js"></script>
-
-</body>
-</html>
+Os polígonos e preços iniciais vieram do KMZ fornecido pelo proprietário do mapa. O motor geométrico funciona localmente. A pesquisa de endereço usa o serviço público Nominatim/OpenStreetMap e deve ser usada em baixo volume, com atribuição mantida.
