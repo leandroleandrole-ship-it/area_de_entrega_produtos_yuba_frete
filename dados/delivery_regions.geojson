@@ -1,17 +1,14 @@
 {
   "type": "FeatureCollection",
-  "name": "Produto Yuba - regiões de entrega",
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_001",
-        "name": "nova area",
-        "sourceName": "R$50,00",
+        "name": "R$50,00",
         "description": "nova area",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 5000
+        "price": 50.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -100,13 +97,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_002",
-        "name": "Região de entrega 2",
-        "sourceName": "R$45,00",
+        "name": "R$45,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 4500
+        "price": 45.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -203,13 +198,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_003",
-        "name": "Região de entrega 3",
-        "sourceName": "30,00",
+        "name": "30,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 3000
+        "price": 30.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -310,13 +303,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_004",
-        "name": "Região de entrega 4",
-        "sourceName": "R$44,00",
+        "name": "R$44,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 4400
+        "price": 44.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -457,13 +448,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_005",
-        "name": "Região de entrega 5",
-        "sourceName": "R$40,00",
+        "name": "R$40,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 4000
+        "price": 40.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -576,13 +565,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_006",
-        "name": "Região de entrega 6",
-        "sourceName": "R$40,00",
+        "name": "R$40,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 4000
+        "price": 40.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -739,13 +726,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_007",
-        "name": "Região de entrega 7",
-        "sourceName": "R$38,00",
+        "name": "R$38,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 3800
+        "price": 38.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -854,13 +839,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_008",
-        "name": "Destino casa",
-        "sourceName": "R$37,00",
+        "name": "R$37,00",
         "description": "Destino casa",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 3700
+        "price": 37.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1057,14 +1040,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_009",
-        "name": "Região Preta    +/- 10 ~ 15 km",
-        "sourceName": "R$33,00",
-        "description": "Região Preta    +/- 10 ~ 15 km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 3300,
-        "distanceKm": 15.0
+        "name": "R$33,00",
+        "description": "Região Preta +/- 10 ~ 15 km",
+        "price": 33.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1317,13 +1297,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_010",
-        "name": "Destino casa",
-        "sourceName": "R$ 30,00",
+        "name": "R$ 30,00",
         "description": "Destino casa",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 3000
+        "price": 30.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1472,13 +1450,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_011",
-        "name": "Região de entrega 11",
-        "sourceName": "R$29,00",
+        "name": "R$29,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2900
+        "price": 29.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1627,13 +1603,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_012",
-        "name": "Região de entrega 12",
-        "sourceName": "R$28,00",
+        "name": "R$28,00",
         "description": "",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2800
+        "price": 28.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1718,13 +1692,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_013",
-        "name": "Destino casa",
-        "sourceName": "R$ 26,00",
+        "name": "R$ 26,00",
         "description": "Destino casa",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2600
+        "price": 26.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1857,14 +1829,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_014",
-        "name": "Região Oliva  9 Km",
-        "sourceName": "R$24,00",
-        "description": "Região Oliva  9 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2400,
-        "distanceKm": 9.0
+        "name": "R$24,00",
+        "description": "Região Oliva 9 Km",
+        "price": 24.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2013,14 +1982,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_015",
-        "name": "Região azul 1",
-        "sourceName": "R$22,00",
-        "description": "Região azul 1\n7 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2200,
-        "distanceKm": 7.0
+        "name": "R$22,00",
+        "description": "Região azul 1 7 Km",
+        "price": 22.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2129,14 +2095,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_016",
-        "name": "Região Verde Limão 6",
-        "sourceName": "R$20,00",
-        "description": "Região Verde Limão 6\n5 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 2000,
-        "distanceKm": 5.0
+        "name": "R$20,00",
+        "description": "Região Verde Limão 6 5 Km",
+        "price": 20.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2257,13 +2220,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_017",
-        "name": "Região Extremo Leste",
-        "sourceName": "R$18,00",
+        "name": "R$18,00",
         "description": "Região Extremo Leste",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1800
+        "price": 18.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2388,14 +2349,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_018",
-        "name": "Região verde 5",
-        "sourceName": "R$18,00",
-        "description": "Região verde 5\n4 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1800,
-        "distanceKm": 4.0
+        "name": "R$18,00",
+        "description": "Região verde 5 4 Km",
+        "price": 18.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2488,14 +2446,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_019",
-        "name": "Região verde 4",
-        "sourceName": "R$16,00",
-        "description": "Região verde 4\n3 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1600,
-        "distanceKm": 3.0
+        "name": "R$16,00",
+        "description": "Região verde 4 3 Km",
+        "price": 16.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2604,14 +2559,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_020",
-        "name": "Região verde 3",
-        "sourceName": "RS16,00",
-        "description": "Região verde 3\n2 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1600,
-        "distanceKm": 2.0
+        "name": "RS16,00",
+        "description": "Região verde 3 2 Km",
+        "price": 16.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2724,14 +2676,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_021",
-        "name": "Região verde 2",
-        "sourceName": "R$14,00",
-        "description": "Região verde 2\n1.5 Km",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1400,
-        "distanceKm": 1.5
+        "name": "R$14,00",
+        "description": "Região verde 2 1.5 Km",
+        "price": 14.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2840,14 +2789,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "ZONE_022",
-        "name": "..Região verde 1",
-        "sourceName": "R$14,00",
-        "description": "..Região verde 1\n1 KM",
-        "kind": "delivery",
-        "color": "#2E7D32",
-        "defaultPriceCents": 1400,
-        "distanceKm": 1.0
+        "name": "R$14,00",
+        "description": "..Região verde 1 1 KM",
+        "price": 14.0,
+        "risk": false,
+        "service": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2944,12 +2890,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "RISK_001",
-        "name": "Área de risco 1",
-        "sourceName": "OBS (Área de Risco) 1 não atendemos",
+        "name": "OBS (Área de Risco) 1 não atendemos",
         "description": "Área de Risco",
-        "kind": "risk",
-        "color": "#2E7D32"
+        "price": null,
+        "risk": true,
+        "service": false
       },
       "geometry": {
         "type": "Polygon",
@@ -3010,12 +2955,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "RISK_002",
-        "name": "Área de risco 2",
-        "sourceName": "OBS (Área de Risco) 2 não atendemos",
+        "name": "OBS (Área de Risco) 2 não atendemos",
         "description": "Área de Risco",
-        "kind": "risk",
-        "color": "#2E7D32"
+        "price": null,
+        "risk": true,
+        "service": false
       },
       "geometry": {
         "type": "Polygon",
@@ -3160,12 +3104,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "RISK_003",
-        "name": "Área de risco 3",
-        "sourceName": "OBS (Área de Risco) 3 não atendemos",
+        "name": "OBS (Área de Risco) 3 não atendemos",
         "description": "",
-        "kind": "risk",
-        "color": "#2E7D32"
+        "price": null,
+        "risk": true,
+        "service": false
       },
       "geometry": {
         "type": "Polygon",
@@ -3242,12 +3185,11 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "REF_001",
         "name": "Shirley Karintô",
-        "sourceName": "Shirley Karintô",
         "description": "",
-        "kind": "reference",
-        "color": "#2E7D32"
+        "price": null,
+        "risk": false,
+        "service": false
       },
       "geometry": {
         "type": "Polygon",
