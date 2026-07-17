@@ -3,49 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Consulte a disponibilidade, distância e valor do frete da Produtos Yuba.">
+  <meta name="description" content="Consulte a disponibilidade e o valor do frete da Produtos Yuba.">
   <title>Área de Entregas | Produtos Yuba</title>
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
-  <main class="app">
-    <header class="cabecalho">
-      <div class="marca">
-        <div class="logo" aria-hidden="true">🦜</div>
-        <div><h1>Área de Entregas</h1><p>Produtos Yuba</p></div>
-      </div>
-      <a class="link-admin" href="admin.html">⚙️ Administrar</a>
-    </header>
+  <header class="topo">
+    <div class="marca">
+      <img src="imagens/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
+      <div><h1>Área de Entregas</h1><p>Produtos Yuba</p></div>
+    </div>
+    <a class="botao-admin" href="admin.html">⚙ Administrar</a>
+  </header>
 
-    <section class="consulta">
-      <h2>Consulte seu endereço</h2>
-      <label for="endereco">Endereço completo</label>
-      <input id="endereco" type="search" autocomplete="street-address"
-        placeholder="Rua, número, bairro, cidade e estado">
-      <div class="acoes">
-        <button id="gps" class="botao botao-secundario" type="button">📍 Minha localização</button>
-        <button id="buscar" class="botao botao-principal" type="button">🚚 Calcular frete</button>
+  <main class="layout">
+    <section class="painel">
+      <div class="bloco">
+        <h2>⌖ Consulte seu endereço</h2>
+        <label for="endereco">Endereço completo</label>
+        <div class="campo-limpar">
+          <input id="endereco" type="search" autocomplete="street-address"
+            placeholder="Rua, número, bairro, cidade e estado">
+          <button id="limpar" aria-label="Limpar endereço">×</button>
+        </div>
+        <div class="acoes">
+          <button id="gps" class="btn secundario">📍 Minha localização</button>
+          <button id="buscar" class="btn principal">🚚 Calcular frete</button>
+        </div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
       </div>
-      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <div id="resultado" class="resultado oculto">
+        <div class="resultado-cabecalho">
+          <div><span id="situacao" class="etiqueta">Resultado</span><h2 id="titulo-resultado">Consulta de entrega</h2></div>
+          <span id="icone-resultado" class="icone">✓</span>
+        </div>
+        <div class="grade">
+          <div><small>Frete</small><strong id="frete">--</strong></div>
+          <div><small>Região</small><strong id="regiao">--</strong></div>
+          <div><small>Distância estimada</small><strong id="distancia">--</strong></div>
+          <div><small>Tempo estimado</small><strong id="tempo">--</strong></div>
+        </div>
+        <p id="observacao" class="observacao"></p>
+        <button id="rota" class="btn rota">🗺 Abrir rota no Google Maps</button>
+      </div>
     </section>
 
-    <section id="resultado" class="resultado oculto">
-      <div class="resultado-topo">
-        <div><p id="situacao" class="etiqueta">Resultado</p><h2 id="titulo-resultado">Consulta de entrega</h2></div>
-        <span id="icone-resultado" class="icone-resultado">✓</span>
+    <section class="mapa-card">
+      <h2>🗺 Localização no mapa</h2>
+      <div id="mapa"></div>
+      <div class="mapa-rodape">
+        <div><strong id="centro-nome">Centro de Distribuição Produtos Yuba</strong><span id="centro-endereco">São Paulo/SP</span></div>
+        <button id="como-funciona" class="btn mini">ⓘ Como funciona?</button>
       </div>
-      <dl class="grade-resultado">
-        <div><dt>Frete</dt><dd id="frete">--</dd></div>
-        <div><dt>Região</dt><dd id="regiao">--</dd></div>
-        <div><dt>Distância estimada</dt><dd id="distancia">--</dd></div>
-        <div><dt>Tempo estimado</dt><dd id="tempo">--</dd></div>
-      </dl>
-      <p id="observacao" class="observacao"></p>
-      <button id="rota" class="botao botao-rota" type="button">🗺️ Abrir rota no Google Maps</button>
     </section>
-
-    <footer><span>Versão 0.5</span><span>Dados cartográficos: OpenStreetMap</span></footer>
   </main>
-  <script src="js/app.js?v=5"></script>
+
+  <dialog id="modal-ajuda">
+    <button id="fechar-ajuda" class="fechar">×</button>
+    <h2>Como funciona?</h2>
+    <p>O endereço é convertido em coordenadas, comparado com os polígonos de entrega e combinado com os preços salvos no Supabase.</p>
+    <p>As alterações feitas no painel administrativo passam a valer para todos os clientes.</p>
+  </dialog>
+
+  <footer>© 2026 Produtos Yuba — Área de Entregas</footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 </body>
 </html>
