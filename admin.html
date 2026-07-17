@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | Produtos Yuba</title>
+  <link rel="stylesheet" href="css/style.css?v=5">
+</head>
+<body>
+  <main class="app admin-app">
+    <header class="cabecalho">
+      <div class="marca">
+        <div class="logo" aria-hidden="true">🦜</div>
+        <div><h1>Painel Administrativo</h1><p>Produtos Yuba</p></div>
+      </div>
+      <a class="link-admin" href="index.html">← Voltar</a>
+    </header>
+    <section class="consulta">
+      <h2>Configuração das áreas</h2>
+      <p class="aviso-admin">As alterações ficam salvas somente neste navegador e aparelho. Para que todos vejam as mudanças, será necessário conectar um banco de dados.</p>
+      <div class="admin-acoes">
+        <button id="salvar-tudo" class="botao botao-principal">💾 Salvar tudo</button>
+        <button id="restaurar" class="botao botao-secundario">↩ Restaurar originais</button>
+      </div>
+      <p id="status-admin" class="status" role="status"></p>
+    </section>
+    <section class="resultado"><div id="lista-areas" class="lista-areas"></div></section>
+    <footer><span>Versão 0.5</span><span>Administração local</span></footer>
+  </main>
+  <script src="js/admin.js?v=5"></script>
+</body>
+</html>
