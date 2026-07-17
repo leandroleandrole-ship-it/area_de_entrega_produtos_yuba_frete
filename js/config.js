@@ -1,6 +1,6 @@
 window.YUBA_CONFIG = {
-  SUPABASE_URL: "COLE_AQUI_A_URL_DO_SEU_PROJETO",
-  SUPABASE_ANON_KEY: "COLE_AQUI_A_CHAVE_ANON_PUBLIC",
+    SUPABASE_URL: "https://opojojmrmscaczmfsqol.supabase.co/rest/v1/",
+    SUPABASE_ANON_KEY: "COLsb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj",
   DISTRIBUTION_CENTER: {
     name: "Centro de Distribuição Produtos Yuba",
     address: "São Paulo/SP",
