@@ -1,13 +1,37 @@
-# Área de Entregas – Produtos Yuba — versão 0.5
+# Área de Entregas – Produtos Yuba — versão 0.6 (Supabase)
 
-Novidades:
-- painel administrativo em `admin.html`;
-- edição local de nomes, preços e status;
-- distância estimada desde o Centro de Distribuição;
-- tempo estimado;
-- apresentação profissional das regiões;
-- rota com origem no Centro de Distribuição.
+## O que mudou
 
-Publique todo o conteúdo do ZIP na raiz do repositório e substitua os arquivos anteriores.
+- Novo visual responsivo em duas colunas.
+- Novo logo.
+- Mapa interativo com Leaflet e as áreas do KMZ.
+- Banco de dados Supabase para nomes, preços e status.
+- Login administrativo com Supabase Auth.
+- Alterações visíveis para todos os clientes.
+- Atualização em tempo real quando os dados mudam.
+- Fallback para os dados do GeoJSON enquanto o Supabase não estiver configurado.
 
-Importante: como o GitHub Pages não possui banco de dados, as alterações do painel ficam somente no navegador/aparelho usado. Para alterações compartilhadas por todos os clientes, será necessária uma integração futura com Firebase ou Supabase.
+## Configuração do Supabase
+
+1. Crie um projeto no Supabase.
+2. Abra o SQL Editor.
+3. Execute `supabase_setup.sql`.
+4. Em Authentication > Users, crie o usuário administrador com e-mail e senha.
+5. Abra Project Settings > API.
+6. Copie:
+   - Project URL
+   - chave pública `anon`
+7. Cole esses dados em `js/config.js`.
+8. Publique todos os arquivos no GitHub Pages.
+9. Abra `admin.html` para entrar e editar os preços.
+
+## Segurança
+
+A chave `anon` pode ficar no site. A segurança é feita pelas políticas RLS:
+- visitantes podem apenas ler;
+- usuários autenticados podem atualizar;
+- a chave `service_role` nunca deve ser colocada no navegador.
+
+## Observação
+
+Antes da publicação definitiva, ajuste em `js/config.js` o endereço e as coordenadas exatas do Centro de Distribuição.
