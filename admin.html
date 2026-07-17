@@ -3,30 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Administrativo | Produtos Yuba</title>
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <title>Administração | Produtos Yuba</title>
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
-<body>
-  <main class="app admin-app">
-    <header class="cabecalho">
-      <div class="marca">
-        <div class="logo" aria-hidden="true">🦜</div>
-        <div><h1>Painel Administrativo</h1><p>Produtos Yuba</p></div>
-      </div>
-      <a class="link-admin" href="index.html">← Voltar</a>
-    </header>
-    <section class="consulta">
-      <h2>Configuração das áreas</h2>
-      <p class="aviso-admin">As alterações ficam salvas somente neste navegador e aparelho. Para que todos vejam as mudanças, será necessário conectar um banco de dados.</p>
-      <div class="admin-acoes">
-        <button id="salvar-tudo" class="botao botao-principal">💾 Salvar tudo</button>
-        <button id="restaurar" class="botao botao-secundario">↩ Restaurar originais</button>
-      </div>
-      <p id="status-admin" class="status" role="status"></p>
+<body class="admin-body">
+  <header class="topo">
+    <div class="marca">
+      <img src="imagens/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
+      <div><h1>Painel Administrativo</h1><p>Produtos Yuba</p></div>
+    </div>
+    <a class="botao-admin" href="index.html">← Voltar</a>
+  </header>
+
+  <main class="admin-main">
+    <section id="login-card" class="admin-card login-card">
+      <h2>Entrar</h2>
+      <p>Use o usuário administrativo criado no Supabase Authentication.</p>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username">
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password">
+      <button id="entrar" class="btn principal">Entrar</button>
+      <p id="login-status" class="status"></p>
     </section>
-    <section class="resultado"><div id="lista-areas" class="lista-areas"></div></section>
-    <footer><span>Versão 0.5</span><span>Administração local</span></footer>
+
+    <section id="admin-conteudo" class="admin-card oculto">
+      <div class="admin-titulo">
+        <div><h2>Áreas e preços</h2><p>Alterações salvas aqui são vistas por todos os clientes.</p></div>
+        <button id="sair" class="btn secundario">Sair</button>
+      </div>
+      <div class="admin-acoes">
+        <button id="salvar-tudo" class="btn principal">💾 Salvar alterações</button>
+        <button id="recarregar" class="btn secundario">↻ Recarregar</button>
+      </div>
+      <p id="admin-status" class="status"></p>
+      <div id="lista-areas" class="lista-areas"></div>
+    </section>
   </main>
-  <script src="js/admin.js?v=5"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/admin.js?v=6"></script>
 </body>
 </html>
