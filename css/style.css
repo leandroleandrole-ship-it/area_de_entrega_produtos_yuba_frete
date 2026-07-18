@@ -310,3 +310,168 @@ body.mapa-editor-body-bloqueado {
     padding: 7px;
   }
 }
+
+
+/* v1.2.6 — somente organização e legibilidade da lista de áreas
+   IMPORTANTE: nenhuma medida do mapa foi alterada. */
+
+#lista-areas.lista-areas,
+#lista-areas.lista-areas-compacta {
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 240px;
+  padding: 4px 7px 8px 1px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+#lista-areas .area-item {
+  display: block !important;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 62px;
+  margin: 0;
+  border: 1px solid #d6e1dc;
+  border-radius: 11px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(7, 70, 45, 0.03);
+}
+
+#lista-areas .area-item:hover {
+  border-color: #8ab5a2;
+  background: #f8fcfa;
+}
+
+#lista-areas .area-item.selecionada {
+  border-color: var(--verde);
+  background: #eef8f3;
+  box-shadow: 0 0 0 3px rgba(15, 107, 70, 0.12);
+}
+
+#lista-areas .area-item.risco {
+  border-left: 5px solid var(--erro);
+}
+
+#lista-areas .area-item.inativa {
+  opacity: 0.62;
+}
+
+#lista-areas .area-selecionar {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 60px;
+  margin: 0;
+  padding: 9px 11px;
+  display: grid !important;
+  grid-template-columns: 15px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #173d30 !important;
+  font-family: inherit;
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+  text-align: left;
+  cursor: pointer;
+}
+
+#lista-areas .area-selecionar:focus-visible {
+  outline: 3px solid rgba(15, 107, 70, 0.22);
+  outline-offset: -3px;
+}
+
+#lista-areas .area-cor {
+  display: block !important;
+  width: 15px;
+  height: 38px;
+  min-width: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+}
+
+#lista-areas .area-selecionar > span:last-child {
+  display: block !important;
+  min-width: 0;
+  color: #173d30 !important;
+}
+
+#lista-areas .area-selecionar strong {
+  display: block !important;
+  margin: 0;
+  color: #173d30 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#lista-areas .area-selecionar small {
+  display: block !important;
+  margin-top: 4px;
+  color: #66776f !important;
+  font-size: 11px !important;
+  font-weight: 500;
+  line-height: 1.2 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Cabeçalho da listagem mais compacto e alinhado */
+.filtros-admin {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 136px;
+  gap: 9px;
+  margin: 9px 0 8px;
+}
+
+.filtros-admin input,
+.filtros-admin select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+}
+
+/* Rolagem mais visível */
+#lista-areas::-webkit-scrollbar {
+  width: 10px;
+}
+
+#lista-areas::-webkit-scrollbar-track {
+  background: #edf3f0;
+  border-radius: 999px;
+}
+
+#lista-areas::-webkit-scrollbar-thumb {
+  background: #8b9992;
+  border: 2px solid #edf3f0;
+  border-radius: 999px;
+}
+
+#lista-areas {
+  scrollbar-color: #8b9992 #edf3f0;
+  scrollbar-width: auto;
+}
+
+@media (max-width: 620px) {
+  .filtros-admin {
+    grid-template-columns: 1fr;
+  }
+
+  #lista-areas .area-item {
+    min-height: 58px;
+  }
+
+  #lista-areas .area-selecionar {
+    min-height: 56px;
+  }
+}
