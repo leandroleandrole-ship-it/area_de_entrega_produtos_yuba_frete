@@ -8,3 +8,45 @@ dialog{max-width:520px;border:0;border-radius:18px;padding:28px;box-shadow:var(-
 .admin-body{min-height:100vh}.admin-main{max-width:1100px;margin:30px auto;padding:0 18px}.admin-card{padding:25px;border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:var(--sombra)}.login-card{max-width:480px;margin:auto}.login-card input{margin-bottom:14px}.login-card .btn{width:100%}.admin-titulo{display:flex;align-items:center;justify-content:space-between;gap:18px}.admin-acoes{display:flex;gap:12px;margin:20px 0}.lista-areas{display:grid;gap:12px}.area-editor{display:grid;grid-template-columns:1.5fr .65fr .5fr auto;gap:12px;align-items:end;padding:15px;border:1px solid var(--borda);border-radius:13px}.area-editor.risco{border-left:5px solid var(--erro)}.area-editor input{min-height:45px;padding:0 12px}.check{display:flex!important;align-items:center;gap:7px;min-height:45px}.check input{width:auto;min-height:auto}.tipo{margin:0 0 8px;color:var(--cinza);font-size:.75rem;font-weight:900;text-transform:uppercase}
 @media(max-width:1000px){.layout{grid-template-columns:1fr}.mapa-card{order:2}#mapa{min-height:480px}.logo-img{width:120px}.marca h1{font-size:2.2rem}}
 @media(max-width:650px){.topo{align-items:flex-start;gap:12px}.marca{align-items:flex-start}.logo-img{width:86px;height:70px}.marca h1{font-size:1.75rem}.marca p{font-size:.95rem}.botao-admin{padding:9px 11px;font-size:.8rem}.layout{padding:0;gap:0}.painel,.mapa-card{border-radius:0}.acoes,.grade{grid-template-columns:1fr}.grade>div{border-right:0}.grade>div:nth-last-child(-n+2){border-bottom:1px solid var(--borda)}.grade>div:last-child{border-bottom:0}#mapa{min-height:390px}.mapa-rodape{align-items:flex-start;gap:12px}.area-editor{grid-template-columns:1fr}.admin-titulo{align-items:flex-start}}
+
+
+/* v1.0.0 — editor visual de áreas */
+.admin-main-largo{max-width:1500px}
+.admin-grid{display:grid;grid-template-columns:minmax(360px,.72fr) minmax(620px,1.28fr);gap:18px;margin-top:18px}
+.admin-grid>.admin-card{min-width:0}
+.mapa-editor-card{display:flex;flex-direction:column}
+.mapa-editor-topo{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.mapa-editor-topo h2,.mapa-editor-topo p{margin-top:0}
+#mapa-admin{min-height:720px;border:1px solid var(--borda);border-radius:14px;overflow:hidden}
+.editor-form{margin:18px 0;padding:18px;border:1px solid var(--borda);border-radius:14px;background:#f8fbf9}
+.editor-form input{width:100%;min-height:48px;padding:0 12px;border:1px solid #cfd9d4;border-radius:11px;margin-bottom:12px}
+.editor-form input[type="color"]{padding:5px}
+.editor-form-topo{display:flex;align-items:center;justify-content:space-between}
+.editor-form-topo h3{margin:0 0 14px}
+.fechar-editor{border:0;background:transparent;font-size:1.7rem;cursor:pointer;color:var(--cinza)}
+.form-duplo{display:grid;grid-template-columns:1fr 110px;gap:12px}
+.ajuda-editor{padding:11px;border-radius:10px;background:var(--verde-claro);color:var(--verde);font-size:.9rem}
+.perigo{background:#a73731;color:#fff}
+.status-erro{color:var(--erro)!important;font-weight:800}
+.lista-areas-compacta{max-height:610px;overflow:auto;padding-right:4px}
+.area-item{border:1px solid var(--borda);border-radius:12px;overflow:hidden;background:#fff}
+.area-item.risco{border-left:5px solid var(--erro)}
+.area-item.inativa{opacity:.58}
+.area-item.selecionada{border-color:var(--verde);box-shadow:0 0 0 3px rgba(15,107,70,.12)}
+.area-selecionar{width:100%;display:flex;align-items:center;gap:12px;padding:13px;border:0;background:transparent;text-align:left;cursor:pointer}
+.area-selecionar span:last-child{min-width:0}
+.area-selecionar strong,.area-selecionar small{display:block}
+.area-selecionar strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.area-selecionar small{margin-top:4px;color:var(--cinza)}
+.area-cor{width:18px;height:42px;border-radius:999px;flex:0 0 auto}
+.leaflet-draw-toolbar a{background-color:#fff}
+@media(max-width:1100px){
+  .admin-grid{grid-template-columns:1fr}
+  #mapa-admin{min-height:560px}
+  .lista-areas-compacta{max-height:420px}
+}
+@media(max-width:650px){
+  .form-duplo{grid-template-columns:1fr}
+  #mapa-admin{min-height:440px}
+  .admin-acoes{flex-wrap:wrap}
+}
