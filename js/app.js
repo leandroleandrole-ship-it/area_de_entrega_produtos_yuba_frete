@@ -28,6 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let marker = null;
   let geoLayer = null;
   let centerMarker = null;
+  let distributionCenter = {
+    name: "Centro de Distribuição Produtos Yuba",
+    address: "Rua Luiza Rosa Paz Landim, 229, Vila Curuçá Velha, São Paulo - SP, 08161-350",
+    lat: Number(cfg.DISTRIBUTION_CENTER?.lat),
+    lon: Number(cfg.DISTRIBUTION_CENTER?.lon)
+  };
+  let distributionCenterPromise = null;
 
   const money = value =>
     new Intl.NumberFormat("pt-BR", {
@@ -35,8 +42,25 @@ document.addEventListener("DOMContentLoaded", () => {
       currency: "BRL"
     }).format(value);
 
+  function ensureClockElement() {
+    let clock = $("relogio-digital");
+    if (clock) return clock;
+
+    const header = document.querySelector(".topo");
+    const adminButton = document.querySelector(".botao-admin");
+    if (!header) return null;
+
+    clock = document.createElement("div");
+    clock.id = "relogio-digital";
+    clock.className = "relogio-digital";
+    clock.setAttribute("aria-label", "Horário atual");
+    clock.textContent = "--:--:--";
+    header.insertBefore(clock, adminButton || null);
+    return clock;
+  }
+
   function updateClock() {
-    const clock = $("relogio-digital");
+    const clock = ensureClockElement();
     if (!clock) return;
     clock.textContent = new Intl.DateTimeFormat("pt-BR", {
       hour: "2-digit",
@@ -89,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       label: properties.label || properties.name || "Área de entrega",
       risk: toBoolean(properties.risk, false),
       active: toBoolean(properties.active, true),
+      service: toBoolean(properties.service, !toBoolean(properties.risk, false)),
       price: parsePrice(properties.price)
     };
   }
@@ -113,14 +138,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function pointOnSegment(x, y, x1, y1, x2, y2, epsilon = 1e-10) {
-    const cross = (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1);
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const lengthSquared = dx * dx + dy * dy;
+
+    // Anéis GeoJSON normalmente repetem o primeiro ponto no final. Esse
+    // segmento tem comprimento zero e não pode considerar qualquer endereço
+    // como estando sobre a borda do polígono.
+    if (lengthSquared <= epsilon * epsilon) {
+      const pointDistanceSquared = (x - x1) ** 2 + (y - y1) ** 2;
+      return pointDistanceSquared <= epsilon * epsilon;
+    }
+
+    const cross = (x - x1) * dy - (y - y1) * dx;
     if (Math.abs(cross) > epsilon) return false;
 
-    const dot = (x - x1) * (x2 - x1) + (y - y1) * (y2 - y1);
-    if (dot < 0) return false;
-
-    const lengthSquared = (x2 - x1) ** 2 + (y2 - y1) ** 2;
-    return dot <= lengthSquared;
+    const dot = (x - x1) * dx + (y - y1) * dy;
+    return dot >= 0 && dot <= lengthSquared;
   }
 
   function inRing(x, y, ring) {
@@ -201,17 +235,18 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("A biblioteca do mapa não foi carregada.");
     }
 
-    const center = cfg.DISTRIBUTION_CENTER;
-    if (
-      !center ||
-      !Number.isFinite(Number(center.lat)) ||
-      !Number.isFinite(Number(center.lon))
-    ) {
-      throw new Error("Centro de distribuição inválido em js/config.js.");
-    }
+    const fallbackLat = Number.isFinite(distributionCenter.lat)
+      ? distributionCenter.lat
+      : -23.5505;
+    const fallbackLon = Number.isFinite(distributionCenter.lon)
+      ? distributionCenter.lon
+      : -46.6333;
+
+    distributionCenter.lat = fallbackLat;
+    distributionCenter.lon = fallbackLon;
 
     map = L.map("mapa", { zoomControl: true }).setView(
-      [Number(center.lat), Number(center.lon)],
+      [fallbackLat, fallbackLon],
       11
     );
 
@@ -220,17 +255,17 @@ document.addEventListener("DOMContentLoaded", () => {
       attribution: "© OpenStreetMap"
     }).addTo(map);
 
-    centerMarker = L.marker([Number(center.lat), Number(center.lon)])
+    centerMarker = L.marker([distributionCenter.lat, distributionCenter.lon])
       .addTo(map)
-      .bindPopup(center.name || "Centro de Distribuição Produtos Yuba");
+      .bindPopup(distributionCenter.name);
 
     if ($("centro-nome")) {
       $("centro-nome").textContent =
-        center.name || "Centro de Distribuição Produtos Yuba";
+        distributionCenter.name;
     }
 
     if ($("centro-endereco")) {
-      $("centro-endereco").textContent = center.address || "São Paulo/SP";
+      $("centro-endereco").textContent = distributionCenter.address;
     }
 
     window.setTimeout(() => map.invalidateSize(), 150);
@@ -392,21 +427,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const properties = normalizeProperties(feature.properties || {});
       feature.properties = properties;
 
-      return (
-        properties.active &&
-        geometryContains(feature.geometry, lon, lat)
-      );
+      return properties.active && geometryContains(feature.geometry, lon, lat);
     });
 
-    // Preserva a regra dos polígonos antigos: a área normal mais específica
-    // é escolhida primeiro. Risco só é usado se não houver área normal.
+    // As regiões antigas têm sobreposições intencionais. No Editor visual
+    // elas são carregadas por preço crescente, então a região de maior preço
+    // fica visualmente por cima. Depois de corrigir o teste geométrico, esta
+    // mesma regra retorna Região Preta/R$33 na Av. Paulista e Extremo Leste/
+    // R$18 no Jardim Helena, sem confundir todos os polígonos.
     const normalArea = matches
-      .filter(feature => feature.properties.risk === false)
-      .sort(
-        (a, b) =>
-          (a.area ?? geometryArea(a.geometry)) -
-          (b.area ?? geometryArea(b.geometry))
-      )[0];
+      .filter(feature =>
+        feature.properties.risk === false &&
+        feature.properties.service !== false &&
+        Number.isFinite(feature.properties.price)
+      )
+      .sort((a, b) => {
+        const priceDifference = b.properties.price - a.properties.price;
+        if (priceDifference !== 0) return priceDifference;
+        return (a.area ?? geometryArea(a.geometry)) -
+          (b.area ?? geometryArea(b.geometry));
+      })[0];
 
     if (normalArea) return normalArea;
 
@@ -467,6 +507,64 @@ document.addEventListener("DOMContentLoaded", () => {
     return data.display_name || `${lat}, ${lon}`;
   }
 
+  async function resolveDistributionCenter() {
+    if (distributionCenterPromise) return distributionCenterPromise;
+
+    distributionCenterPromise = (async () => {
+      try {
+        const location = await geocode(distributionCenter.address);
+        distributionCenter.lat = location.lat;
+        distributionCenter.lon = location.lon;
+        distributionCenter.address = location.address || distributionCenter.address;
+
+        if (centerMarker) {
+          centerMarker.setLatLng([distributionCenter.lat, distributionCenter.lon]);
+          centerMarker.bindPopup(distributionCenter.name);
+        }
+
+        if ($("centro-endereco")) {
+          $("centro-endereco").textContent = distributionCenter.address;
+        }
+      } catch (error) {
+        console.warn("Não foi possível geocodificar o centro; usando coordenadas do config.js.", error);
+      }
+
+      return distributionCenter;
+    })();
+
+    return distributionCenterPromise;
+  }
+
+  async function calculateRoadRoute(destinationLat, destinationLon) {
+    const center = await resolveDistributionCenter();
+
+    try {
+      const url =
+        `https://router.project-osrm.org/route/v1/driving/` +
+        `${center.lon},${center.lat};${destinationLon},${destinationLat}` +
+        `?overview=false&steps=false`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Rota rodoviária indisponível.");
+      const data = await response.json();
+      const route = data.routes?.[0];
+      if (!route) throw new Error("Rota não encontrada.");
+
+      return {
+        km: route.distance / 1000,
+        minutes: Math.max(1, Math.round(route.duration / 60)),
+        source: "road"
+      };
+    } catch (error) {
+      console.warn("Usando distância em linha reta como contingência.", error);
+      const km = distance(center.lat, center.lon, destinationLat, destinationLon);
+      return {
+        km,
+        minutes: Math.max(20, Math.round((km / 22) * 60 + 15)),
+        source: "straight"
+      };
+    }
+  }
+
   function distance(lat1, lon1, lat2, lon2) {
     const earthRadius = 6371;
     const radians = value => (value * Math.PI) / 180;
@@ -486,7 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  function showResult(feature, lat, lon) {
+  async function showResult(feature, lat, lon) {
     atual = { lat, lon };
 
     if (marker) marker.remove();
@@ -498,13 +596,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     map.setView([lat, lon], 14);
 
-    const center = cfg.DISTRIBUTION_CENTER;
-    const km = distance(
-      Number(center.lat),
-      Number(center.lon),
-      lat,
-      lon
-    );
+    const routeInfo = await calculateRoadRoute(lat, lon);
+    const km = routeInfo.km;
 
     ui.resultado.classList.remove("oculto", "erro");
 
@@ -531,10 +624,10 @@ document.addEventListener("DOMContentLoaded", () => {
       : "Frete não configurado";
     ui.regiao.textContent = feature.properties.label;
     ui.distancia.textContent = `${km.toFixed(1).replace(".", ",")} km`;
-    ui.tempo.textContent =
-      `aprox. ${Math.max(20, Math.round((km / 22) * 60 + 15))} min`;
-    ui.observacao.textContent =
-      "Distância em linha reta e tempo aproximado; o trajeto real pode variar.";
+    ui.tempo.textContent = `aprox. ${routeInfo.minutes} min`;
+    ui.observacao.textContent = routeInfo.source === "road"
+      ? "Distância e tempo estimados pela rota rodoviária desde a Rua Luiza Rosa Paz Landim, 229."
+      : "Rota rodoviária indisponível: distância em linha reta usada temporariamente.";
   }
 
   function setLoading(active, message = "") {
@@ -558,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const location = await geocode(query);
         ui.endereco.value = location.address;
         const area = findArea(location.lat, location.lon);
-        showResult(area, location.lat, location.lon);
+        await showResult(area, location.lat, location.lon);
         setStatus(
           area
             ? `Consulta concluída: ${area.properties.label}.`
@@ -597,7 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
           try {
             ui.endereco.value = await reverseGeocode(lat, lon);
             const area = findArea(lat, lon);
-            showResult(area, lat, lon);
+            await showResult(area, lat, lon);
             setStatus("Localização consultada.");
           } catch (error) {
             console.error(error);
@@ -631,12 +724,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.rota.addEventListener("click", () => {
       if (!atual) return;
 
-      const center = cfg.DISTRIBUTION_CENTER;
-      window.open(
-        `https://www.google.com/maps/dir/?api=1&origin=${center.lat},${center.lon}` +
-          `&destination=${atual.lat},${atual.lon}`,
-        "_blank"
-      );
+      resolveDistributionCenter().then(center => {
+        window.open(
+          `https://www.google.com/maps/dir/?api=1&origin=${center.lat},${center.lon}` +
+            `&destination=${atual.lat},${atual.lon}`,
+          "_blank"
+        );
+      });
     });
 
     $("como-funciona")?.addEventListener("click", () => {
@@ -666,6 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   db = createDatabaseClient();
 
+  resolveDistributionCenter();
   loadAreas();
 
   if (db) {
