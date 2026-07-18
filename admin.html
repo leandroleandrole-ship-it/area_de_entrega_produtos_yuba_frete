@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Configuração | Produtos Yuba</title>
-   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/leandroleandrole-ship-it/area_de_entrega_produtos_yuba_frete/refs/heads/main/images/logo_produto_yuba.png">
+  <title>Administração | Produtos Yuba</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
-  <link rel="stylesheet" href="css/style.css?v=1010">
+  <link rel="stylesheet" href="css/style.css?v=1240">
 </head>
 <body class="admin-body">
   <header class="topo">
     <div class="marca">
       <img src="https://raw.githubusercontent.com/leandroleandrole-ship-it/area_de_entrega_produtos_yuba_frete/refs/heads/main/images/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
       <div><h1><i>Configuração</i></h1><p>Gestão de áreas e fretes</p></div>
-        </div>
-    <div id="relogio-digital" class="relogio-digital" aria-label="Horário atual">--:--:--</div>
-    <a class="botao-admin" href="admin.html">⚙ Administrar</a>
     </div>
     <a class="botao-admin" href="index.html">← Voltar</a>
   </header>
@@ -47,6 +43,12 @@
         <section class="admin-card">
           <div class="admin-acoes">
             <button id="nova-area" class="btn principal">＋ Nova área</button>
+            <button id="duplicar-area" class="btn secundario" disabled>⧉ Duplicar</button>
+            <button id="exportar-backup" class="btn secundario">⇩ Backup</button>
+            <label class="btn secundario importar-arquivo">
+              ⇧ Restaurar
+              <input id="restaurar-backup" type="file" accept=".json,.geojson,application/json" hidden>
+            </label>
             <button id="importar-atuais" class="btn secundario">Importar áreas atuais</button>
             <button id="recarregar" class="btn secundario">↻ Recarregar</button>
           </div>
@@ -88,7 +90,23 @@
           </div>
 
           <p id="admin-status" class="status"></p>
+
+          <div class="filtros-admin">
+            <input id="buscar-area" type="search" placeholder="Buscar região...">
+            <select id="filtro-status">
+              <option value="todas">Todas</option>
+              <option value="ativas">Ativas</option>
+              <option value="inativas">Inativas</option>
+              <option value="risco">Áreas de risco</option>
+            </select>
+          </div>
+
           <div id="lista-areas" class="lista-areas lista-areas-compacta"></div>
+
+          <details class="historico-card">
+            <summary>Histórico de alterações</summary>
+            <div id="historico-lista" class="historico-lista"></div>
+          </details>
         </section>
 
         <section class="admin-card mapa-editor-card">
@@ -97,19 +115,23 @@
               <h2>Editor visual</h2>
               <p>Selecione uma área na lista ou clique em “Nova área”.</p>
             </div>
-            <span id="contador-areas" class="etiqueta">0 áreas</span>
+            <div class="mapa-editor-controles">
+              <span id="contador-areas" class="etiqueta">0 áreas</span>
+              <button id="alternar-tela-cheia" class="btn secundario btn-tela-cheia" type="button">
+                ⛶ Tela cheia
+              </button>
+            </div>
           </div>
           <div id="mapa-admin"></div>
         </section>
       </div>
     </section>
   </main>
- <footer>© 2026 Produtos Yuba — Área de Entregas - Desenvolvido por Leandro J. Silva</footer>
-
+<footer>© 2026 Produtos Yuba — Área de Entregas - Desenvolvido por Leandro J. Silva</footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js?v=1010"></script>
-  <script src="js/admin.js?v=1010"></script>
+  <script src="js/admin.js?v=1240"></script>
 </body>
 </html>
