@@ -1,42 +1,27 @@
-# Área de Entregas – Produtos Yuba — versão 0.6.1
+# Área de Entregas – Produtos Yuba — versão 0.6.2
 
-## Correções
+## Correção da página inicial
 
-- Corrigido o erro de RLS no painel administrativo:
-  o sistema agora usa `UPDATE ... WHERE id = ...`, sem tentar inserir uma nova linha.
-- Melhor diagnóstico quando o arquivo GeoJSON não está publicado.
-- Inclui novamente as pastas completas:
-  - `dados`
-  - `imagens`
-  - `css`
-  - `js`
+Esta versão corrige o problema em que nenhum botão respondia.
 
-## Publicação no GitHub
+A causa era o carregamento inicial das áreas: quando o GeoJSON ou a consulta ao Supabase apresentava uma falha, o JavaScript era interrompido antes de registrar os eventos dos botões.
 
-Envie TODO o conteúdo deste ZIP para a raiz do repositório e substitua os arquivos existentes.
+## Correções incluídas
 
-A estrutura precisa ficar exatamente assim:
+- os botões continuam funcionando mesmo se o carregamento das áreas falhar;
+- mensagens de erro mais claras;
+- tratamento melhor da busca de endereço;
+- tratamento completo da geolocalização;
+- botão “Como funciona?” compatível com mais navegadores;
+- atualização em tempo real protegida contra erros;
+- nova versão de cache `v=62`.
 
-```
-index.html
-admin.html
-supabase_setup.sql
-css/style.css
-js/app.js
-js/admin.js
-js/config.js
-dados/delivery_regions.geojson
-imagens/logo_produto_yuba.png
-```
+## Publicação
 
-Depois aguarde o GitHub Pages e use `Ctrl + F5`.
+Envie todo o conteúdo deste ZIP para a raiz do repositório, substituindo os arquivos atuais. Depois aguarde o GitHub Pages e pressione `Ctrl + F5`.
 
-## Verificação direta
+Confirme também estas URLs:
 
-Abra estas URLs no navegador:
-
-- `SEU_SITE/imagens/logo_produto_yuba.png`
+- `SEU_SITE/js/app.js?v=62`
 - `SEU_SITE/dados/delivery_regions.geojson`
-
-A primeira deve mostrar o logo.
-A segunda deve mostrar um arquivo JSON grande começando com `FeatureCollection`.
+- `SEU_SITE/imagens/logo_produto_yuba.png`
