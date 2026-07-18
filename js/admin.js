@@ -7,6 +7,17 @@ async function load(){const{data,error}=await db.from("delivery_areas").select("
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function render(){$("lista-areas").innerHTML=rows.map(r=>`<article class="area-editor ${r.risk?"risco":""}" data-id="${r.id}"><div><p class="tipo">${r.risk?"Área de risco":"Área de entrega"} · ${esc(r.name)}</p><label>Nome exibido</label><input class="label" value="${esc(r.label)}"></div><div><label>Frete (R$)</label><input class="price" type="number" min="0" step=".01" value="${r.price??""}" ${r.risk?"disabled":""}></div><div><label class="check"><input class="active" type="checkbox" ${r.active?"checked":""}> Área ativa</label></div><button class="btn secundario salvar">Salvar</button></article>`).join("")}
 function collect(card){const old=rows.find(r=>r.id===card.dataset.id);return{id:old.id,label:card.querySelector(".label").value.trim(),price:old.risk?null:Number(card.querySelector(".price").value),active:card.querySelector(".active").checked,updated_at:new Date().toISOString()}}
-async function save(items){const{error}=await db.from("delivery_areas").upsert(items,{onConflict:"id"});$("admin-status").textContent=error?error.message:"Alterações salvas e publicadas para todos os clientes.";if(!error)load()}
+async function save(items){
+  $("admin-status").textContent="Salvando alterações...";
+  const resultados=await Promise.all(items.map(async item=>{
+    const{id,...alteracoes}=item;
+    return db.from("delivery_areas").update(alteracoes).eq("id",id);
+  }));
+  const falha=resultados.find(resultado=>resultado.error);
+  $("admin-status").textContent=falha
+    ? falha.error.message
+    : "Alterações salvas e publicadas para todos os clientes.";
+  if(!falha)load();
+}
 $("lista-areas").onclick=e=>{const b=e.target.closest(".salvar");if(b)save([collect(b.closest(".area-editor"))])};
 $("salvar-tudo").onclick=()=>save([...document.querySelectorAll(".area-editor")].map(collect));$("recarregar").onclick=load;session()});
