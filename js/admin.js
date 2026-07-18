@@ -1,14 +1,30 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const cfg = window.YUBA_CONFIG;
+  const cfg = window.YUBA_CONFIG || {};
   const $ = id => document.getElementById(id);
-  const configured = cfg.SUPABASE_URL.startsWith("https://opojojmrmscaczmfsqol.supabase.co") && !cfg.SUPABASE_ANON_KEY.startsWith("sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj");
 
-  if (!configured) {
-    $("login-status").textContent = "Configure js/config.js antes de usar o painel.";
+  const supabaseUrl = String(cfg.SUPABASE_URL || "https://opojojmrmscaczmfsqol.supabase.co").trim();
+  const supabaseKey = String(cfg.SUPABASE_ANON_KEY || "sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj").trim();
+
+  if (!supabaseUrl || !supabaseKey) {
+    $("login-status").textContent =
+      "A URL ou a chave do Supabase não foi encontrada em js/config.js.";
+    console.error("Configuração ausente:", {
+      temUrl: Boolean(supabaseUrl),
+      temChave: Boolean(supabaseKey)
+    });
     return;
   }
 
-  const db = supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  let db;
+  try {
+    db = supabase.createClient(supabaseUrl, supabaseKey);
+    $("login-status").textContent = "";
+  } catch (erro) {
+    $("login-status").textContent =
+      "Não foi possível iniciar a conexão com o Supabase.";
+    console.error("Erro ao iniciar Supabase:", erro);
+    return;
+  }
   let rows = [];
   let map;
   let areasLayer;
