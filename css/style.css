@@ -50,3 +50,51 @@ dialog{max-width:520px;border:0;border-radius:18px;padding:28px;box-shadow:var(-
   #mapa-admin{min-height:440px}
   .admin-acoes{flex-wrap:wrap}
 }
+
+
+/* v1.1.0 — gestão avançada */
+.filtros-admin{display:grid;grid-template-columns:1fr 150px;gap:10px;margin:16px 0}
+.filtros-admin input,.filtros-admin select{min-height:44px;border:1px solid var(--borda);border-radius:10px;padding:0 11px;background:#fff}
+.importar-arquivo{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.historico-card{margin-top:18px;border-top:1px solid var(--borda);padding-top:14px}
+.historico-card summary{cursor:pointer;font-weight:800;color:var(--verde)}
+.historico-lista{display:grid;gap:8px;margin-top:12px;max-height:320px;overflow:auto}
+.historico-item{display:grid;grid-template-columns:125px 1fr;gap:3px 10px;padding:10px;border:1px solid var(--borda);border-radius:10px;background:#fff}
+.historico-item strong{grid-row:1 / span 2;color:var(--verde)}
+.historico-item span{font-weight:700}
+.historico-item small,.texto-suave{color:var(--cinza)}
+@media(max-width:650px){
+  .filtros-admin{grid-template-columns:1fr}
+  .historico-item{grid-template-columns:1fr}
+  .historico-item strong{grid-row:auto}
+}
+
+
+/* v1.2.0 — relógio digital */
+.relogio-digital {
+  min-width: 220px;
+  padding: 8px 18px;
+  color: #d9efff;
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 3px;
+  text-align: center;
+  text-shadow:
+    2px 2px 0 #001f31,
+    -1px -1px 0 #8dd4ff,
+    0 0 8px rgba(138, 212, 255, 0.35);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .relogio-digital {
+    order: 3;
+    width: 100%;
+    min-width: 0;
+    font-size: 2rem;
+    padding: 4px 0;
+  }
+}
