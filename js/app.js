@@ -205,19 +205,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const properties=normalizeProperties(feature.properties||{});
         feature.properties=properties;
         return properties.active && geometryContains(feature.geometry,lon,lat);
-      })
-      .sort((a,b)=>{
-        const areaA=a.area??geometryArea(a.geometry);
-        const areaB=b.area??geometryArea(b.geometry);
-        const areaDifference=areaA-areaB;
-
-        // A área mais específica (menor polígono) sempre prevalece.
-        // Em caso de áreas praticamente iguais, a área de risco prevalece.
-        if(Math.abs(areaDifference)>1e-12)return areaDifference;
-        return Number(Boolean(b.properties.risk))-Number(Boolean(a.properties.risk));
       });
 
-    return found[0]||null;
+    // Se houver uma área normal de entrega, ela sempre prevalece
+    // sobre qualquer área de risco sobreposta.
+    const deliveryAreas=found
+      .filter(feature=>feature.properties.risk!==true)
+      .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)));
+
+    if(deliveryAreas.length)return deliveryAreas[0];
+
+    // A área de risco só é usada quando não existe nenhuma área normal.
+    const riskAreas=found
+      .filter(feature=>feature.properties.risk===true)
+      .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)));
+
+    return riskAreas[0]||null;
   }
   function distance(lat1,lon1,lat2,lon2){const R=6371,r=x=>x*Math.PI/180,d1=r(lat2-lat1),d2=r(lon2-lon1),a=Math.sin(d1/2)**2+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(d2/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
   const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v);
