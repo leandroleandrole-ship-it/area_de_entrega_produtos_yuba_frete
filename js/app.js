@@ -14,6 +14,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   const colors=["#159447","#68b877","#f2cf35","#f6ae2d","#ef7d38","#e45d59","#de5f92","#bc64c8","#7a6dd2","#5c8bc7","#9ea5aa"];
   function colorFor(price,risk){if(risk)return"#9ea5aa";const values=[14,16,18,20,22,24,30,35,40,50];const i=values.indexOf(Math.round(Number(price)));return colors[i<0?0:i]}
 
+  function toBoolean(value,defaultValue=false){
+    if(typeof value==="boolean")return value;
+    if(typeof value==="number")return value===1;
+    if(typeof value==="string"){
+      const normalized=value.trim().toLowerCase();
+      if(["true","1","sim","yes","on"].includes(normalized))return true;
+      if(["false","0","não","nao","no","off",""].includes(normalized))return false;
+    }
+    return defaultValue;
+  }
+
+  function normalizeProperties(properties={}){
+    return {
+      ...properties,
+      risk:toBoolean(properties.risk,false),
+      active:toBoolean(properties.active,true),
+      price:properties.price===null||properties.price===undefined||properties.price===""
+        ? null
+        : Number(properties.price)
+    };
+  }
+
   async function loadAreas(){
     let databaseRows = [];
     if(db){
@@ -26,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .filter(row=>row.geometry)
       .map(row=>({
         type:"Feature",
-        properties:{...row},
+        properties:normalizeProperties(row),
         geometry:row.geometry
       }));
 
@@ -39,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const remote=Object.fromEntries(databaseRows.map(x=>[x.id,x]));
       areas=g.features.map(f=>({
         ...f,
-        properties:{...f.properties,...(remote[f.properties.id]||{})},
+        properties:normalizeProperties({...f.properties,...(remote[f.properties.id]||{})}),
         geometry:normalizeGeometry(f.geometry),
         area:geometryArea(f.geometry)
       }));
@@ -57,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           dashArray:f.properties.active===false?"6 6":null
         }),
         onEachFeature:(f,l)=>l.bindPopup(
-          `<strong>${f.properties.label}</strong><br>${f.properties.risk?"Não atendemos":money(f.properties.price)}`
+          `<strong>${f.properties.label}</strong><br>${toBoolean(f.properties.risk,false)?"Não atendemos":money(f.properties.price)}`
         )
       }
     ).addTo(map);
@@ -178,21 +200,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function findArea(lat,lon){
-    const found=areas.filter(feature=>{
-      const properties=feature.properties||{};
-      return properties.active!==false && geometryContains(feature.geometry,lon,lat);
-    });
+    const found=areas
+      .filter(feature=>{
+        const properties=normalizeProperties(feature.properties||{});
+        feature.properties=properties;
+        return properties.active && geometryContains(feature.geometry,lon,lat);
+      })
+      .sort((a,b)=>{
+        const areaA=a.area??geometryArea(a.geometry);
+        const areaB=b.area??geometryArea(b.geometry);
+        const areaDifference=areaA-areaB;
 
-    const risk=found.find(feature=>feature.properties?.risk===true);
-    if(risk)return risk;
+        // A área mais específica (menor polígono) sempre prevalece.
+        // Em caso de áreas praticamente iguais, a área de risco prevalece.
+        if(Math.abs(areaDifference)>1e-12)return areaDifference;
+        return Number(Boolean(b.properties.risk))-Number(Boolean(a.properties.risk));
+      });
 
-    return found
-      .filter(feature=>feature.properties?.risk!==true)
-      .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)))[0]||null;
+    return found[0]||null;
   }
   function distance(lat1,lon1,lat2,lon2){const R=6371,r=x=>x*Math.PI/180,d1=r(lat2-lat1),d2=r(lon2-lon1),a=Math.sin(d1/2)**2+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(d2/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
   const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v);
-  function show(f,lat,lon){atual={lat,lon};if(marker)marker.remove();marker=L.marker([lat,lon]).addTo(map).bindPopup("Endereço consultado").openPopup();map.setView([lat,lon],14);const km=distance(cfg.DISTRIBUTION_CENTER.lat,cfg.DISTRIBUTION_CENTER.lon,lat,lon);ui.resultado.classList.remove("oculto","erro");if(!f||f.properties.risk){ui.resultado.classList.add("erro");ui.situacao.textContent=f?"Área de risco":"Fora da cobertura";ui.titulo.textContent="Entrega indisponível";ui.icone.textContent="!";ui.frete.textContent=f?"Não atendemos":"Indisponível";ui.regiao.textContent=f?.properties.label||"Fora das áreas cadastradas";ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent="Não aplicável";ui.observacao.textContent=f?.properties.description||"Consulte a Produtos Yuba.";return}ui.situacao.textContent="Entrega disponível";ui.titulo.textContent="Endereço dentro da cobertura";ui.icone.textContent="✓";ui.frete.textContent=money(f.properties.price);ui.regiao.textContent=f.properties.label;ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent=`aprox. ${Math.max(20,Math.round(km/22*60+15))} min`;ui.observacao.textContent="Distância em linha reta e tempo aproximado; o trajeto real pode variar."}
+  function show(f,lat,lon){atual={lat,lon};if(marker)marker.remove();marker=L.marker([lat,lon]).addTo(map).bindPopup("Endereço consultado").openPopup();map.setView([lat,lon],14);const km=distance(cfg.DISTRIBUTION_CENTER.lat,cfg.DISTRIBUTION_CENTER.lon,lat,lon);ui.resultado.classList.remove("oculto","erro");if(!f||toBoolean(f.properties.risk,false)){ui.resultado.classList.add("erro");ui.situacao.textContent=f?"Área de risco":"Fora da cobertura";ui.titulo.textContent="Entrega indisponível";ui.icone.textContent="!";ui.frete.textContent=f?"Não atendemos":"Indisponível";ui.regiao.textContent=f?.properties.label||"Fora das áreas cadastradas";ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent="Não aplicável";ui.observacao.textContent=f?.properties.description||"Consulte a Produtos Yuba.";return}ui.situacao.textContent="Entrega disponível";ui.titulo.textContent="Endereço dentro da cobertura";ui.icone.textContent="✓";ui.frete.textContent=money(f.properties.price);ui.regiao.textContent=f.properties.label;ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent=`aprox. ${Math.max(20,Math.round(km/22*60+15))} min`;ui.observacao.textContent="Distância em linha reta e tempo aproximado; o trajeto real pode variar."}
   function loading(v,m=""){ui.buscar.disabled=v;ui.gps.disabled=v;ui.buscar.textContent=v?"Aguarde...":"🚚 Calcular frete";ui.status.textContent=m}
   ui.buscar.onclick=async()=>{const q=ui.endereco.value.trim();if(!q)return ui.endereco.focus();loading(true,"Localizando endereço...");try{const l=await geocode(q);ui.endereco.value=l.address;const area=findArea(l.lat,l.lon);show(area,l.lat,l.lon);ui.status.textContent=area?`Consulta concluída: ${area.properties.label||area.properties.name}.`:"Consulta concluída: endereço fora da cobertura."}catch(e){console.error(e);ui.status.textContent=e.message}finally{loading(false,ui.status.textContent)}};
   ui.endereco.onkeydown=e=>{if(e.key==="Enter")ui.buscar.click()};ui.limpar.onclick=()=>{ui.endereco.value="";ui.endereco.focus()};
