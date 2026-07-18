@@ -15,16 +15,59 @@ document.addEventListener("DOMContentLoaded", async () => {
   function colorFor(price,risk){if(risk)return"#9ea5aa";const values=[14,16,18,20,22,24,30,35,40,50];const i=values.indexOf(Math.round(Number(price)));return colors[i<0?0:i]}
 
   async function loadAreas(){
-    const respostaGeo=await fetch("./dados/delivery_regions.geojson?v=61");
-    if(!respostaGeo.ok)throw new Error("Arquivo dados/delivery_regions.geojson não encontrado.");
-    const g=await respostaGeo.json();
-    let remote={};
-    if(db){const {data,error}=await db.from("delivery_areas").select("*");if(!error)remote=Object.fromEntries(data.map(x=>[x.id,x]));}
-    areas=g.features.map(f=>({...f,properties:{...f.properties,...(remote[f.properties.id]||{})},area:polyArea(f.geometry.coordinates[0])}));
+    let databaseRows = [];
+    if(db){
+      const {data,error}=await db.from("delivery_areas").select("*");
+      if(error)throw error;
+      databaseRows=data||[];
+    }
+
+    const databaseFeatures=databaseRows
+      .filter(row=>row.geometry)
+      .map(row=>({
+        type:"Feature",
+        properties:{...row},
+        geometry:row.geometry
+      }));
+
+    if(databaseFeatures.length){
+      areas=databaseFeatures.map(f=>({...f,area:polyArea(f.geometry.coordinates[0])}));
+    }else{
+      const respostaGeo=await fetch("./dados/delivery_regions.geojson?v=1000");
+      if(!respostaGeo.ok)throw new Error("Arquivo dados/delivery_regions.geojson não encontrado.");
+      const g=await respostaGeo.json();
+      const remote=Object.fromEntries(databaseRows.map(x=>[x.id,x]));
+      areas=g.features.map(f=>({
+        ...f,
+        properties:{...f.properties,...(remote[f.properties.id]||{})},
+        area:polyArea(f.geometry.coordinates[0])
+      }));
+    }
+
     if(geoLayer)geoLayer.remove();
-    geoLayer=L.geoJSON({type:"FeatureCollection",features:areas},{style:f=>({color:"#fff",weight:1,fillColor:colorFor(f.properties.price,f.properties.risk),fillOpacity:.58}),onEachFeature:(f,l)=>l.bindPopup(`<strong>${f.properties.label}</strong><br>${f.properties.risk?"Não atendemos":money(f.properties.price)}`)}).addTo(map);
-    map.fitBounds(geoLayer.getBounds(),{padding:[10,10]});
-    ui.status.textContent=configured?`${areas.length} áreas sincronizadas com o banco de dados.`:`${areas.length} áreas carregadas. Configure o Supabase para sincronização global.`;
+    geoLayer=L.geoJSON(
+      {type:"FeatureCollection",features:areas},
+      {
+        style:f=>({
+          color:"#fff",
+          weight:1,
+          fillColor:f.properties.color||colorFor(f.properties.price,f.properties.risk),
+          fillOpacity:f.properties.active===false?.15:.58,
+          dashArray:f.properties.active===false?"6 6":null
+        }),
+        onEachFeature:(f,l)=>l.bindPopup(
+          `<strong>${f.properties.label}</strong><br>${f.properties.risk?"Não atendemos":money(f.properties.price)}`
+        )
+      }
+    ).addTo(map);
+
+    if(geoLayer.getLayers().length){
+      map.fitBounds(geoLayer.getBounds(),{padding:[10,10]});
+    }
+
+    ui.status.textContent=databaseFeatures.length
+      ? `${areas.length} áreas carregadas diretamente do banco de dados.`
+      : `${areas.length} áreas carregadas. Importe os polígonos no painel para edição completa.`;
   }
   try {
     await loadAreas();
