@@ -15,7 +15,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   function colorFor(price,risk){if(risk)return"#9ea5aa";const values=[14,16,18,20,22,24,30,35,40,50];const i=values.indexOf(Math.round(Number(price)));return colors[i<0?0:i]}
 
   async function loadAreas(){
-    const g=await fetch("./dados/delivery_regions.geojson?v=6").then(r=>r.json());
+    const respostaGeo=await fetch("./dados/delivery_regions.geojson?v=61");
+    if(!respostaGeo.ok)throw new Error("Arquivo dados/delivery_regions.geojson não encontrado.");
+    const g=await respostaGeo.json();
     let remote={};
     if(db){const {data,error}=await db.from("delivery_areas").select("*");if(!error)remote=Object.fromEntries(data.map(x=>[x.id,x]));}
     areas=g.features.map(f=>({...f,properties:{...f.properties,...(remote[f.properties.id]||{})},area:polyArea(f.geometry.coordinates[0])}));
