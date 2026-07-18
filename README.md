@@ -1,37 +1,42 @@
-# Área de Entregas – Produtos Yuba — versão 0.6 (Supabase)
+# Área de Entregas – Produtos Yuba — versão 0.6.1
 
-## O que mudou
+## Correções
 
-- Novo visual responsivo em duas colunas.
-- Novo logo.
-- Mapa interativo com Leaflet e as áreas do KMZ.
-- Banco de dados Supabase para nomes, preços e status.
-- Login administrativo com Supabase Auth.
-- Alterações visíveis para todos os clientes.
-- Atualização em tempo real quando os dados mudam.
-- Fallback para os dados do GeoJSON enquanto o Supabase não estiver configurado.
+- Corrigido o erro de RLS no painel administrativo:
+  o sistema agora usa `UPDATE ... WHERE id = ...`, sem tentar inserir uma nova linha.
+- Melhor diagnóstico quando o arquivo GeoJSON não está publicado.
+- Inclui novamente as pastas completas:
+  - `dados`
+  - `imagens`
+  - `css`
+  - `js`
 
-## Configuração do Supabase
+## Publicação no GitHub
 
-1. Crie um projeto no Supabase.
-2. Abra o SQL Editor.
-3. Execute `supabase_setup.sql`.
-4. Em Authentication > Users, crie o usuário administrador com e-mail e senha.
-5. Abra Project Settings > API.
-6. Copie:
-   - Project URL
-   - chave pública `anon`
-7. Cole esses dados em `js/config.js`.
-8. Publique todos os arquivos no GitHub Pages.
-9. Abra `admin.html` para entrar e editar os preços.
+Envie TODO o conteúdo deste ZIP para a raiz do repositório e substitua os arquivos existentes.
 
-## Segurança
+A estrutura precisa ficar exatamente assim:
 
-A chave `anon` pode ficar no site. A segurança é feita pelas políticas RLS:
-- visitantes podem apenas ler;
-- usuários autenticados podem atualizar;
-- a chave `service_role` nunca deve ser colocada no navegador.
+```
+index.html
+admin.html
+supabase_setup.sql
+css/style.css
+js/app.js
+js/admin.js
+js/config.js
+dados/delivery_regions.geojson
+imagens/logo_produto_yuba.png
+```
 
-## Observação
+Depois aguarde o GitHub Pages e use `Ctrl + F5`.
 
-Antes da publicação definitiva, ajuste em `js/config.js` o endereço e as coordenadas exatas do Centro de Distribuição.
+## Verificação direta
+
+Abra estas URLs no navegador:
+
+- `SEU_SITE/imagens/logo_produto_yuba.png`
+- `SEU_SITE/dados/delivery_regions.geojson`
+
+A primeira deve mostrar o logo.
+A segunda deve mostrar um arquivo JSON grande começando com `FeatureCollection`.
