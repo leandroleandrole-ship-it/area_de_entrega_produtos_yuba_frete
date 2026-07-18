@@ -33,14 +33,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     return defaultValue;
   }
 
+  function parsePrice(value){
+    if(value===null||value===undefined||value==="")return null;
+    if(typeof value==="number")return Number.isFinite(value)?value:null;
+
+    let text=String(value).trim().replace(/R\$/gi,"").replace(/\s/g,"");
+    if(text.includes(",")&&text.includes(".")){
+      text=text.replace(/\./g,"").replace(",",".");
+    }else if(text.includes(",")){
+      text=text.replace(",",".");
+    }
+
+    const parsed=Number(text);
+    return Number.isFinite(parsed)?parsed:null;
+  }
+
   function normalizeProperties(properties={}){
+    const rawPrice=
+      properties.price ??
+      properties.freight ??
+      properties.frete ??
+      properties.valor ??
+      properties.value;
+
     return {
       ...properties,
       risk:toBoolean(properties.risk,false),
       active:toBoolean(properties.active,true),
-      price:properties.price===null||properties.price===undefined||properties.price===""
-        ? null
-        : Number(properties.price)
+      price:parsePrice(rawPrice)
     };
   }
 
@@ -215,32 +235,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         return properties.active && geometryContains(feature.geometry,lon,lat);
       });
 
-    const bySpecificity=(a,b)=>
-      (a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry));
+    const normalAreas=found.filter(feature=>feature.properties.risk!==true);
 
-    // Uma área normal com preço válido sempre prevalece.
-    const pricedDeliveryAreas=found
+    // Os polígonos atuais podem se sobrepor. Nessa estrutura, a região de
+    // R$ 14 funciona como uma cobertura-base e regiões de valores maiores
+    // ficam desenhadas por cima dela. Por isso, quando um endereço estiver
+    // em mais de uma área normal, prevalece o MAIOR valor de frete.
+    const pricedDeliveryAreas=normalAreas
       .filter(feature=>
-        feature.properties.risk!==true &&
         Number.isFinite(feature.properties.price) &&
         feature.properties.price>=0
       )
-      .sort(bySpecificity);
+      .sort((a,b)=>{
+        const priceDifference=b.properties.price-a.properties.price;
+        if(priceDifference!==0)return priceDifference;
+
+        // Em empate de preço, usa o menor polígono como desempate.
+        return (a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry));
+      });
 
     if(pricedDeliveryAreas.length)return pricedDeliveryAreas[0];
 
-    // Mantém uma área normal sem preço para informar erro de cadastro,
-    // em vez de classificá-la incorretamente como área de risco.
-    const unpricedDeliveryAreas=found
-      .filter(feature=>feature.properties.risk!==true)
-      .sort(bySpecificity);
+    // Área normal sem preço: informa que falta configurar, sem classificar
+    // incorretamente como área de risco.
+    if(normalAreas.length){
+      return normalAreas.sort((a,b)=>
+        (a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry))
+      )[0];
+    }
 
-    if(unpricedDeliveryAreas.length)return unpricedDeliveryAreas[0];
-
-    // A área de risco somente é usada quando nenhuma área normal contém o ponto.
+    // Área de risco somente quando nenhuma área normal contém o endereço.
     const riskAreas=found
       .filter(feature=>feature.properties.risk===true)
-      .sort(bySpecificity);
+      .sort((a,b)=>
+        (a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry))
+      );
 
     return riskAreas[0]||null;
   }
