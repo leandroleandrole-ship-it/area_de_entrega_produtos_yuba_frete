@@ -235,15 +235,14 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("A biblioteca do mapa não foi carregada.");
     }
 
+    // A origem é Object.freeze e não pode ser regravada.
+    // Apenas lemos as coordenadas fixas para iniciar o mapa.
     const fallbackLat = Number.isFinite(distributionCenter.lat)
       ? distributionCenter.lat
-      : -23.5505;
+      : -23.50578607041293;
     const fallbackLon = Number.isFinite(distributionCenter.lon)
       ? distributionCenter.lon
-      : -46.6333;
-
-    distributionCenter.lat = fallbackLat;
-    distributionCenter.lon = fallbackLon;
+      : -46.41478500476243;
 
     map = L.map("mapa", { zoomControl: true }).setView(
       [fallbackLat, fallbackLon],
