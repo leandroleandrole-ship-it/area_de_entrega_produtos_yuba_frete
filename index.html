@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Consulte a disponibilidade e o valor do frete da Produtos Yuba.">
-  <title>Área de Entregas | Produtos Yuba</title>
+  <title>Cálculo de Frete</title>
   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/leandroleandrole-ship-it/area_de_entrega_produtos_yuba_frete/refs/heads/main/images/logo_produto_yuba.png">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -14,8 +14,8 @@
 <body>
   <header class="topo">
     <div class="marca">
-     <img src="https://raw.githubusercontent.com/leandroleandrole-ship-it/area_de_entrega_produtos_yuba_frete/refs/heads/main/images/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
-      <div><h1>Área de Entregas</h1><p>Produtos Yuba</p></div>
+      <img src="https://raw.githubusercontent.com/leandroleandrole-ship-it/area_de_entrega_produtos_yuba_frete/refs/heads/main/images/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
+      <div><h1><i>Cálculo de Frete </i></h1><p>Produtos Yuba</p></div>
     </div>
     <div id="relogio-digital" class="relogio-digital" aria-label="Horário atual">--:--:--</div>
     <a class="botao-admin" href="admin.html">⚙ Administrar</a>
@@ -67,6 +67,7 @@
   <dialog id="modal-ajuda">
     <button id="fechar-ajuda" class="fechar">×</button>
     <h2>Como funciona?</h2>
+    <p>O endereço é convertido em coordenadas, comparado com os polígonos de entrega e combinado com os preços salvos no Supabase.</p>
     <p>O endereço é convertido em coordenadas, comparado com os polígonos de entrega e combinado com os preços salvos no banco de dados.</p>
     <p>As alterações de fretes feitas no painel administrativo passam a valer para todas as regiões alteradas.</p>
   </dialog>
@@ -74,10 +75,13 @@
  <footer>© 2026 Produtos Yuba — Área de Entregas - Desenvolvido por Leandro J. Silva</footer>
 
 
+
+
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js?v=1000"></script>
-  <script src="js/app.js?v=1210"></script>
+  <script src="js/app.js?v=1230"></script>
 </body>
 </html>
