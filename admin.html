@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administração | Produtos Yuba</title>
-  <link rel="stylesheet" href="css/style.css?v=622">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+  <link rel="stylesheet" href="css/style.css?v=1000">
 </head>
 <body class="admin-body">
   <header class="topo">
     <div class="marca">
       <img src="imagens/logo_produto_yuba.png" alt="Logo Produtos Yuba" class="logo-img">
-      <div><h1>Painel Administrativo</h1><p>Produtos Yuba</p></div>
+      <div><h1>Painel Administrativo</h1><p>Gestão de áreas e fretes</p></div>
     </div>
     <a class="botao-admin" href="index.html">← Voltar</a>
   </header>
 
-  <main class="admin-main">
+  <main class="admin-main admin-main-largo">
     <section id="login-card" class="admin-card login-card">
       <h2>Entrar</h2>
       <p>Use o usuário administrativo criado no Supabase Authentication.</p>
@@ -27,22 +29,81 @@
       <p id="login-status" class="status"></p>
     </section>
 
-    <section id="admin-conteudo" class="admin-card oculto">
-      <div class="admin-titulo">
-        <div><h2>Áreas e preços</h2><p>Alterações salvas aqui são vistas por todos os clientes.</p></div>
+    <section id="admin-conteudo" class="oculto">
+      <div class="admin-card admin-titulo">
+        <div>
+          <h2>Áreas de entrega</h2>
+          <p>Crie, edite ou exclua polígonos diretamente no mapa.</p>
+        </div>
         <button id="sair" class="btn secundario">Sair</button>
       </div>
-      <div class="admin-acoes">
-        <button id="salvar-tudo" class="btn principal">💾 Salvar alterações</button>
-        <button id="recarregar" class="btn secundario">↻ Recarregar</button>
+
+      <div class="admin-grid">
+        <section class="admin-card">
+          <div class="admin-acoes">
+            <button id="nova-area" class="btn principal">＋ Nova área</button>
+            <button id="importar-atuais" class="btn secundario">Importar áreas atuais</button>
+            <button id="recarregar" class="btn secundario">↻ Recarregar</button>
+          </div>
+
+          <div id="editor-form" class="editor-form oculto">
+            <div class="editor-form-topo">
+              <h3 id="editor-titulo">Nova área</h3>
+              <button id="cancelar-edicao" class="fechar-editor" type="button">×</button>
+            </div>
+
+            <input id="area-id" type="hidden">
+
+            <label for="area-nome">Nome interno</label>
+            <input id="area-nome" placeholder="Ex.: Zona Norte 4">
+
+            <label for="area-label">Nome exibido</label>
+            <input id="area-label" placeholder="Ex.: Região Zona Norte">
+
+            <div class="form-duplo">
+              <div>
+                <label for="area-preco">Frete (R$)</label>
+                <input id="area-preco" type="number" min="0" step="0.01">
+              </div>
+              <div>
+                <label for="area-cor">Cor</label>
+                <input id="area-cor" type="color" value="#159447">
+              </div>
+            </div>
+
+            <label class="check"><input id="area-risco" type="checkbox"> Área de risco</label>
+            <label class="check"><input id="area-ativa" type="checkbox" checked> Área ativa</label>
+
+            <p class="ajuda-editor">Use as ferramentas do mapa para desenhar ou alterar o polígono.</p>
+
+            <div class="admin-acoes">
+              <button id="salvar-area" class="btn principal">💾 Salvar área</button>
+              <button id="excluir-area" class="btn perigo oculto">Excluir</button>
+            </div>
+          </div>
+
+          <p id="admin-status" class="status"></p>
+          <div id="lista-areas" class="lista-areas lista-areas-compacta"></div>
+        </section>
+
+        <section class="admin-card mapa-editor-card">
+          <div class="mapa-editor-topo">
+            <div>
+              <h2>Editor visual</h2>
+              <p>Selecione uma área na lista ou clique em “Nova área”.</p>
+            </div>
+            <span id="contador-areas" class="etiqueta">0 áreas</span>
+          </div>
+          <div id="mapa-admin"></div>
+        </section>
       </div>
-      <p id="admin-status" class="status"></p>
-      <div id="lista-areas" class="lista-areas"></div>
     </section>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js?v=622"></script>
-  <script src="js/admin.js?v=622"></script>
+  <script src="js/config.js?v=1000"></script>
+  <script src="js/admin.js?v=1000"></script>
 </body>
 </html>
