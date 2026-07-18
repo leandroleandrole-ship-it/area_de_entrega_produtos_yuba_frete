@@ -71,30 +71,96 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 
 
-/* v1.2.0 — relógio digital */
-.relogio-digital {
-  min-width: 220px;
-  padding: 8px 18px;
-  color: #d9efff;
-  font-family: "Courier New", Courier, monospace;
-  font-size: clamp(2rem, 4vw, 3.8rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 3px;
-  text-align: center;
-  text-shadow:
-    2px 2px 0 #001f31,
-    -1px -1px 0 #8dd4ff,
-    0 0 8px rgba(138, 212, 255, 0.35);
+/* v1.2.4 — Editor visual ampliado e tela cheia */
+.mapa-editor-controles {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-tela-cheia {
+  min-height: 40px;
+  padding: 8px 13px;
   white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-  .relogio-digital {
-    order: 3;
+#mapa-admin {
+  min-height: 820px;
+  height: min(76vh, 980px);
+}
+
+/* Fullscreen nativo */
+.mapa-editor-card:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  padding: 16px;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.mapa-editor-card:fullscreen #mapa-admin {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Alternativa para navegadores sem Fullscreen API */
+.mapa-editor-card.mapa-editor-expandido {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  padding: 16px;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.mapa-editor-card.mapa-editor-expandido #mapa-admin {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+body.mapa-editor-body-bloqueado {
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  #mapa-admin {
+    min-height: 650px;
+    height: 70vh;
+  }
+}
+
+@media (max-width: 650px) {
+  .mapa-editor-topo {
+    flex-direction: column;
+  }
+
+  .mapa-editor-controles {
     width: 100%;
-    min-width: 0;
-    font-size: 2rem;
-    padding: 4px 0;
+    justify-content: space-between;
+  }
+
+  #mapa-admin {
+    min-height: 520px;
+    height: 68vh;
+  }
+
+  .mapa-editor-card:fullscreen,
+  .mapa-editor-card.mapa-editor-expandido {
+    padding: 8px;
   }
 }
