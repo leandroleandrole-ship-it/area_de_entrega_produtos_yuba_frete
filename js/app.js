@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const cfg = window.YUBA_CONFIG;
-  const configured = cfg.SUPABASE_URL.startsWith("https://") && !cfg.SUPABASE_ANON_KEY.startsWith("COLE_");
+  const configured = cfg.SUPABASE_URL.startsWith("https://opojojmrmscaczmfsqol.supabase.co") && !cfg.SUPABASE_ANON_KEY.startsWith("sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj");
   const db = configured ? supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY) : null;
   const $ = id => document.getElementById(id);
   const ui = {endereco:$("endereco"),limpar:$("limpar"),gps:$("gps"),buscar:$("buscar"),rota:$("rota"),status:$("status"),resultado:$("resultado"),situacao:$("situacao"),titulo:$("titulo-resultado"),icone:$("icone-resultado"),frete:$("frete"),regiao:$("regiao"),distancia:$("distancia"),tempo:$("tempo"),observacao:$("observacao")};
@@ -26,12 +26,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     map.fitBounds(geoLayer.getBounds(),{padding:[10,10]});
     ui.status.textContent=configured?`${areas.length} áreas sincronizadas com o banco de dados.`:`${areas.length} áreas carregadas. Configure o Supabase para sincronização global.`;
   }
-  await loadAreas();
+  try {
+    await loadAreas();
+  } catch (erro) {
+    console.error("Falha ao carregar áreas:", erro);
+    ui.status.textContent = erro.message || "Não foi possível carregar as áreas de entrega.";
+  }
 
-  if(db) db.channel("delivery-areas-live").on("postgres_changes",{event:"*",schema:"public",table:"delivery_areas"},loadAreas).subscribe();
+  if (db) {
+    db.channel("delivery-areas-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "delivery_areas" }, async () => {
+        try {
+          await loadAreas();
+        } catch (erro) {
+          console.error("Falha na atualização em tempo real:", erro);
+        }
+      })
+      .subscribe();
+  }
 
-  async function geocode(q){const p=new URLSearchParams({q,format:"jsonv2",limit:"1",countrycodes:"br",addressdetails:"1","accept-language":"pt-BR"});const r=await fetch(`https://nominatim.openstreetmap.org/search?${p}`);const d=await r.json();if(!d.length)throw Error("Endereço não encontrado.");return{lat:+d[0].lat,lon:+d[0].lon,address:d[0].display_name}}
-  async function reverse(lat,lon){const p=new URLSearchParams({lat,lon,format:"jsonv2","accept-language":"pt-BR"});const r=await fetch(`https://nominatim.openstreetmap.org/reverse?${p}`);const d=await r.json();return d.display_name||`${lat}, ${lon}`}
+  async function geocode(q){
+    const p=new URLSearchParams({q,format:"jsonv2",limit:"1",countrycodes:"br",addressdetails:"1","accept-language":"pt-BR"});
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?${p}`,{headers:{Accept:"application/json"}});
+    if(!r.ok)throw Error("Falha ao consultar o endereço.");
+    const d=await r.json();
+    if(!d.length)throw Error("Endereço não encontrado.");
+    return{lat:+d[0].lat,lon:+d[0].lon,address:d[0].display_name};
+  }
+  async function reverse(lat,lon){
+    const p=new URLSearchParams({lat,lon,format:"jsonv2","accept-language":"pt-BR"});
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?${p}`,{headers:{Accept:"application/json"}});
+    if(!r.ok)throw Error("Falha ao identificar sua localização.");
+    const d=await r.json();
+    return d.display_name||`${lat}, ${lon}`;
+  }
   function inRing(x,y,a){let c=false;for(let i=0,j=a.length-1;i<a.length;j=i++){const[xi,yi]=a[i],[xj,yj]=a[j];if((yi>y)!=(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c}
   function inPoly(x,y,r){if(!inRing(x,y,r[0]))return false;for(let i=1;i<r.length;i++)if(inRing(x,y,r[i]))return false;return true}
   function polyArea(a){let s=0;for(let i=0,j=a.length-1;i<a.length;j=i++)s+=a[j][0]*a[i][1]-a[i][0]*a[j][1];return Math.abs(s/2)}
@@ -42,7 +70,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   function loading(v,m=""){ui.buscar.disabled=v;ui.gps.disabled=v;ui.buscar.textContent=v?"Aguarde...":"🚚 Calcular frete";ui.status.textContent=m}
   ui.buscar.onclick=async()=>{const q=ui.endereco.value.trim();if(!q)return ui.endereco.focus();loading(true,"Localizando endereço...");try{const l=await geocode(q);ui.endereco.value=l.address;show(findArea(l.lat,l.lon),l.lat,l.lon);ui.status.textContent="Consulta concluída."}catch(e){ui.status.textContent=e.message}finally{loading(false,ui.status.textContent)}};
   ui.endereco.onkeydown=e=>{if(e.key==="Enter")ui.buscar.click()};ui.limpar.onclick=()=>{ui.endereco.value="";ui.endereco.focus()};
-  ui.gps.onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(async p=>{const lat=p.coords.latitude,lon=p.coords.longitude;ui.endereco.value=await reverse(lat,lon);show(findArea(lat,lon),lat,lon);ui.status.textContent="Localização consultada."},()=>ui.status.textContent="Não foi possível obter sua localização.",{enableHighAccuracy:true,timeout:15000}):ui.status.textContent="Geolocalização indisponível.";
+  ui.gps.onclick=()=>{
+    if(!navigator.geolocation){
+      ui.status.textContent="Geolocalização indisponível.";
+      return;
+    }
+    loading(true,"Obtendo sua localização...");
+    navigator.geolocation.getCurrentPosition(async p=>{
+      const lat=p.coords.latitude,lon=p.coords.longitude;
+      try{
+        ui.endereco.value=await reverse(lat,lon);
+        show(findArea(lat,lon),lat,lon);
+        ui.status.textContent="Localização consultada.";
+      }catch(erro){
+        console.error(erro);
+        ui.status.textContent=erro.message||"Não foi possível consultar sua localização.";
+      }finally{
+        loading(false,ui.status.textContent);
+      }
+    },erro=>{
+      const mensagens={1:"Permissão de localização negada.",2:"Localização indisponível.",3:"A localização demorou demais."};
+      loading(false,mensagens[erro.code]||"Não foi possível obter sua localização.");
+    },{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+  };
   ui.rota.onclick=()=>atual&&window.open(`https://www.google.com/maps/dir/?api=1&origin=${cfg.DISTRIBUTION_CENTER.lat},${cfg.DISTRIBUTION_CENTER.lon}&destination=${atual.lat},${atual.lon}`,"_blank");
-  $("como-funciona").onclick=()=>$("modal-ajuda").showModal();$("fechar-ajuda").onclick=()=>$("modal-ajuda").close();
+  $("como-funciona").onclick=()=>{
+    const modal=$("modal-ajuda");
+    if(typeof modal.showModal==="function") modal.showModal();
+    else modal.setAttribute("open","");
+  };
+  $("fechar-ajuda").onclick=()=>{
+    const modal=$("modal-ajuda");
+    if(typeof modal.close==="function") modal.close();
+    else modal.removeAttribute("open");
+  };
 });
