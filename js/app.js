@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const cfg = window.YUBA_CONFIG;
-  const configured = cfg.SUPABASE_URL.startsWith("https://") && !cfg.SUPABASE_ANON_KEY.startsWith("COLE_");
+  const configured = cfg.SUPABASE_URL.startsWith("https://opojojmrmscaczmfsqol.supabase.co") && !cfg.SUPABASE_ANON_KEY.startsWith("sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj");
   const db = configured ? supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY) : null;
   const $ = id => document.getElementById(id);
   const ui = {endereco:$("endereco"),limpar:$("limpar"),gps:$("gps"),buscar:$("buscar"),rota:$("rota"),status:$("status"),resultado:$("resultado"),situacao:$("situacao"),titulo:$("titulo-resultado"),icone:$("icone-resultado"),frete:$("frete"),regiao:$("regiao"),distancia:$("distancia"),tempo:$("tempo"),observacao:$("observacao")};
