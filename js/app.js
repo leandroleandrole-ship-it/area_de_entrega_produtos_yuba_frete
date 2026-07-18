@@ -28,13 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let marker = null;
   let geoLayer = null;
   let centerMarker = null;
-  let distributionCenter = {
+  // Origem fixa e imutável para todos os cálculos de rota e distância.
+  const distributionCenter = Object.freeze({
     name: "Centro de Distribuição Produtos Yuba",
-    address: "Rua Luiza Rosa Paz Landim, 229, Vila Curuçá Velha, São Paulo - SP, 08161-350",
-    lat: Number(cfg.DISTRIBUTION_CENTER?.lat),
-    lon: Number(cfg.DISTRIBUTION_CENTER?.lon)
-  };
-  let distributionCenterPromise = null;
+    address: "Rua Luiza Rosa Paz Landim, 229, Vila Curuçá Velha, São Paulo - SP",
+    lat: -23.50578607041293,
+    lon: -46.41478500476243
+  });
 
   const money = value =>
     new Intl.NumberFormat("pt-BR", {
@@ -508,31 +508,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function resolveDistributionCenter() {
-    if (distributionCenterPromise) return distributionCenterPromise;
-
-    distributionCenterPromise = (async () => {
-      try {
-        const location = await geocode(distributionCenter.address);
-        distributionCenter.lat = location.lat;
-        distributionCenter.lon = location.lon;
-        distributionCenter.address = location.address || distributionCenter.address;
-
-        if (centerMarker) {
-          centerMarker.setLatLng([distributionCenter.lat, distributionCenter.lon]);
-          centerMarker.bindPopup(distributionCenter.name);
-        }
-
-        if ($("centro-endereco")) {
-          $("centro-endereco").textContent = distributionCenter.address;
-        }
-      } catch (error) {
-        console.warn("Não foi possível geocodificar o centro; usando coordenadas do config.js.", error);
-      }
-
-      return distributionCenter;
-    })();
-
-    return distributionCenterPromise;
+    // Não geocodifica nem altera a origem. A coordenada fornecida pelo usuário
+    // é usada diretamente em todas as consultas.
+    return distributionCenter;
   }
 
   async function calculateRoadRoute(destinationLat, destinationLon) {
