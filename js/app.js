@@ -47,7 +47,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadAreas(){
     let databaseRows = [];
     if(db){
-      const {data,error}=await db.from("delivery_areas").select("*");
+      const {data,error}=await db
+        .from("delivery_areas")
+        .select("*")
+        .order("price",{ascending:true,nullsFirst:false});
       if(error)throw error;
       databaseRows=data||[];
     }
@@ -80,10 +83,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       {type:"FeatureCollection",features:areas},
       {
         style:f=>({
-          color:"#fff",
-          weight:1,
-          fillColor:f.properties.color||colorFor(f.properties.price,toBoolean(f.properties.risk,false)),
-          fillOpacity:toBoolean(f.properties.active,true)?.58:.15,
+          color:f.properties.color||(toBoolean(f.properties.risk,false)?"#9ea5aa":"#159447"),
+          weight:2,
+          fillColor:f.properties.color||(toBoolean(f.properties.risk,false)?"#9ea5aa":"#159447"),
+          fillOpacity:toBoolean(f.properties.active,true)?.35:.12,
           dashArray:toBoolean(f.properties.active,true)?null:"6 6"
         }),
         onEachFeature:(f,l)=>l.bindPopup(
@@ -213,19 +216,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       return feature.properties.active && geometryContains(feature.geometry,lon,lat);
     });
 
-    // Mantém a regra que já funcionava nos polígonos antigos:
-    // área de risco explicitamente marcada tem prioridade;
-    // entre áreas normais sobrepostas, vence o menor polígono.
-    const riskArea=found.find(feature=>feature.properties.risk===true);
-    if(riskArea)return riskArea;
+    // Regra validada para as áreas antigas, que são zonas concêntricas:
+    // 1) procura primeiro uma área normal de entrega;
+    // 2) entre áreas normais sobrepostas, usa o menor polígono;
+    // 3) só retorna área de risco quando nenhuma área normal contém o ponto.
+    const normalArea=found
+      .filter(feature=>feature.properties.risk===false)
+      .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)))[0];
+
+    if(normalArea)return normalArea;
 
     return found
-      .filter(feature=>feature.properties.risk===false)
+      .filter(feature=>feature.properties.risk===true)
       .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)))[0]||null;
   }
   function distance(lat1,lon1,lat2,lon2){const R=6371,r=x=>x*Math.PI/180,d1=r(lat2-lat1),d2=r(lon2-lon1),a=Math.sin(d1/2)**2+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(d2/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
   const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v);
-  function show(f,lat,lon){atual={lat,lon};if(marker)marker.remove();marker=L.marker([lat,lon]).addTo(map).bindPopup("Endereço consultado").openPopup();map.setView([lat,lon],14);const km=distance(cfg.DISTRIBUTION_CENTER.lat,cfg.DISTRIBUTION_CENTER.lon,lat,lon);ui.resultado.classList.remove("oculto","erro");if(!f||toBoolean(f.properties.risk,false)){ui.resultado.classList.add("erro");ui.situacao.textContent=f?"Área de risco":"Fora da cobertura";ui.titulo.textContent="Entrega indisponível";ui.icone.textContent="!";ui.frete.textContent=f?"Não atendemos":"Indisponível";ui.regiao.textContent=f?.properties.label||"Fora das áreas cadastradas";ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent="Não aplicável";ui.observacao.textContent=f?.properties.description||"Consulte a Produtos Yuba.";return}ui.situacao.textContent="Entrega disponível";ui.titulo.textContent="Endereço dentro da cobertura";ui.icone.textContent="✓";ui.frete.textContent=Number.isFinite(f.properties.price)?money(f.properties.price):"Frete não configurado";ui.regiao.textContent=f.properties.label;ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent=`aprox. ${Math.max(20,Math.round(km/22*60+15))} min`;ui.observacao.textContent="Distância em linha reta e tempo aproximado; o trajeto real pode variar."}
+  function highlightArea(feature){
+    if(!geoLayer||!feature)return;
+    geoLayer.eachLayer(layer=>{
+      if(layer.feature===feature&&typeof layer.bringToFront==="function")layer.bringToFront();
+    });
+    if(marker&&typeof marker.bringToFront==="function")marker.bringToFront();
+  }
+  function show(f,lat,lon){atual={lat,lon};if(marker)marker.remove();marker=L.marker([lat,lon],{zIndexOffset:1000}).addTo(map).bindPopup("Endereço consultado").openPopup();map.setView([lat,lon],14);highlightArea(f);const km=distance(cfg.DISTRIBUTION_CENTER.lat,cfg.DISTRIBUTION_CENTER.lon,lat,lon);ui.resultado.classList.remove("oculto","erro");if(!f||toBoolean(f.properties.risk,false)){ui.resultado.classList.add("erro");ui.situacao.textContent=f?"Área de risco":"Fora da cobertura";ui.titulo.textContent="Entrega indisponível";ui.icone.textContent="!";ui.frete.textContent=f?"Não atendemos":"Indisponível";ui.regiao.textContent=f?.properties.label||"Fora das áreas cadastradas";ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent="Não aplicável";ui.observacao.textContent=f?.properties.description||"Consulte a Produtos Yuba.";return}ui.situacao.textContent="Entrega disponível";ui.titulo.textContent="Endereço dentro da cobertura";ui.icone.textContent="✓";ui.frete.textContent=Number.isFinite(f.properties.price)?money(f.properties.price):"Frete não configurado";ui.regiao.textContent=f.properties.label;ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent=`aprox. ${Math.max(20,Math.round(km/22*60+15))} min`;ui.observacao.textContent="Distância em linha reta e tempo aproximado; o trajeto real pode variar."}
   function loading(v,m=""){ui.buscar.disabled=v;ui.gps.disabled=v;ui.buscar.textContent=v?"Aguarde...":"🚚 Calcular frete";ui.status.textContent=m}
   ui.buscar.onclick=async()=>{const q=ui.endereco.value.trim();if(!q)return ui.endereco.focus();loading(true,"Localizando endereço...");try{const l=await geocode(q);ui.endereco.value=l.address;const area=findArea(l.lat,l.lon);show(area,l.lat,l.lon);ui.status.textContent=area?`Consulta concluída: ${area.properties.label||area.properties.name}.`:"Consulta concluída: endereço fora da cobertura."}catch(e){console.error(e);ui.status.textContent=e.message}finally{loading(false,ui.status.textContent)}};
   ui.endereco.onkeydown=e=>{if(e.key==="Enter")ui.buscar.click()};ui.limpar.onclick=()=>{ui.endereco.value="";ui.endereco.focus()};
