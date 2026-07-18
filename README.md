@@ -1,27 +1,74 @@
-# Área de Entregas – Produtos Yuba — versão 0.6.2
+# Produtos Yuba — versão 1.0.0
 
-## Correção da página inicial
+## Nova implementação
 
-Esta versão corrige o problema em que nenhum botão respondia.
+Esta versão adiciona o **Editor Visual de Áreas** no painel administrativo.
 
-A causa era o carregamento inicial das áreas: quando o GeoJSON ou a consulta ao Supabase apresentava uma falha, o JavaScript era interrompido antes de registrar os eventos dos botões.
+Agora é possível:
 
-## Correções incluídas
+- criar uma nova área desenhando o polígono no mapa;
+- editar os vértices de uma área existente;
+- alterar nome, frete, cor, status e tipo;
+- criar áreas de risco;
+- excluir uma área;
+- publicar alterações imediatamente para todos os clientes;
+- deixar de depender do My Maps depois da importação inicial.
 
-- os botões continuam funcionando mesmo se o carregamento das áreas falhar;
-- mensagens de erro mais claras;
-- tratamento melhor da busca de endereço;
-- tratamento completo da geolocalização;
-- botão “Como funciona?” compatível com mais navegadores;
-- atualização em tempo real protegida contra erros;
-- nova versão de cache `v=62`.
+## Instalação
 
-## Publicação
+### 1. Supabase
 
-Envie todo o conteúdo deste ZIP para a raiz do repositório, substituindo os arquivos atuais. Depois aguarde o GitHub Pages e pressione `Ctrl + F5`.
+Abra o **SQL Editor** e execute:
 
-Confirme também estas URLs:
+`supabase_migration_v1.sql`
 
-- `SEU_SITE/js/app.js?v=62`
-- `SEU_SITE/dados/delivery_regions.geojson`
-- `SEU_SITE/imagens/logo_produto_yuba.png`
+Esse arquivo adiciona:
+
+- coluna `geometry`;
+- coluna `color`;
+- permissão para inserir áreas;
+- permissão para editar áreas;
+- permissão para excluir áreas.
+
+### 2. GitHub
+
+Envie todos os arquivos deste pacote para a raiz do repositório, substituindo os existentes.
+
+Depois aguarde o GitHub Pages e pressione:
+
+`Ctrl + F5`
+
+### 3. Primeira importação
+
+Entre em:
+
+`admin.html`
+
+Depois clique em:
+
+**Importar áreas atuais**
+
+Esse procedimento copia os polígonos do arquivo GeoJSON atual para o Supabase.
+
+Ele precisa ser feito apenas uma vez.
+
+## Criar uma nova área
+
+1. Clique em **Nova área**.
+2. Clique na ferramenta de polígono no canto superior direito do mapa.
+3. Desenhe a área.
+4. Preencha nome, rótulo, frete e cor.
+5. Clique em **Salvar área**.
+
+A nova área passa a funcionar imediatamente na página inicial.
+
+## Editar uma área
+
+1. Clique na área na lista ou no mapa.
+2. Use a ferramenta de edição do mapa.
+3. Arraste os vértices.
+4. Clique em **Salvar área**.
+
+## Observação
+
+A página inicial usa os polígonos do Supabase quando eles existem. Antes da primeira importação, ela continua usando o GeoJSON local como segurança.
