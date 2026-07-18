@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cfg = window.YUBA_CONFIG || {};
   const $ = id => document.getElementById(id);
 
-  const supabaseUrl = String(cfg.SUPABASE_URL || "https://opojojmrmscaczmfsqol.supabase.co").trim();
-  const supabaseKey = String(cfg.SUPABASE_ANON_KEY || "sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj").trim();
+  const supabaseUrl = String(cfg.SUPABASE_URL || "").trim();
+  const supabaseKey = String(cfg.SUPABASE_ANON_KEY || "").trim();
 
   if (!supabaseUrl || !supabaseKey) {
     $("login-status").textContent =
