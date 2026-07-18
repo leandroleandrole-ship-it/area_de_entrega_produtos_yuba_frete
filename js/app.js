@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const cfg = window.YUBA_CONFIG;
-  const configured = cfg.SUPABASE_URL.startsWith("https://opojojmrmscaczmfsqol.supabase.co") && !cfg.SUPABASE_ANON_KEY.startsWith("sb_publishable_jYUJW4hr8eN1q1TaQrBIKw_wzt306mj");
+  const configured = cfg.SUPABASE_URL.startsWith("https://") && !cfg.SUPABASE_ANON_KEY.startsWith("COLE_");
   const db = configured ? supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY) : null;
   const $ = id => document.getElementById(id);
   const ui = {endereco:$("endereco"),limpar:$("limpar"),gps:$("gps"),buscar:$("buscar"),rota:$("rota"),status:$("status"),resultado:$("resultado"),situacao:$("situacao"),titulo:$("titulo-resultado"),icone:$("icone-resultado"),frete:$("frete"),regiao:$("regiao"),distancia:$("distancia"),tempo:$("tempo"),observacao:$("observacao")};
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }));
 
     if(databaseFeatures.length){
-      areas=databaseFeatures.map(f=>({...f,area:polyArea(f.geometry.coordinates[0])}));
+      areas=databaseFeatures.map(f=>({...f,geometry:normalizeGeometry(f.geometry),area:geometryArea(f.geometry)})).filter(f=>f.geometry);
     }else{
       const respostaGeo=await fetch("./dados/delivery_regions.geojson?v=1000");
       if(!respostaGeo.ok)throw new Error("Arquivo dados/delivery_regions.geojson não encontrado.");
@@ -40,7 +40,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       areas=g.features.map(f=>({
         ...f,
         properties:{...f.properties,...(remote[f.properties.id]||{})},
-        area:polyArea(f.geometry.coordinates[0])
+        geometry:normalizeGeometry(f.geometry),
+        area:geometryArea(f.geometry)
       }));
     }
 
@@ -103,15 +104,97 @@ document.addEventListener("DOMContentLoaded", async () => {
     const d=await r.json();
     return d.display_name||`${lat}, ${lon}`;
   }
-  function inRing(x,y,a){let c=false;for(let i=0,j=a.length-1;i<a.length;j=i++){const[xi,yi]=a[i],[xj,yj]=a[j];if((yi>y)!=(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c}
-  function inPoly(x,y,r){if(!inRing(x,y,r[0]))return false;for(let i=1;i<r.length;i++)if(inRing(x,y,r[i]))return false;return true}
-  function polyArea(a){let s=0;for(let i=0,j=a.length-1;i<a.length;j=i++)s+=a[j][0]*a[i][1]-a[i][0]*a[j][1];return Math.abs(s/2)}
-  function findArea(lat,lon){const found=areas.filter(f=>f.properties.active!==false&&inPoly(lon,lat,f.geometry.coordinates));return found.find(f=>f.properties.risk)||found.filter(f=>!f.properties.risk).sort((a,b)=>a.area-b.area)[0]||null}
+  function normalizeGeometry(geometry){
+    if(!geometry)return null;
+    if(typeof geometry==="string"){
+      try{geometry=JSON.parse(geometry)}catch{return null}
+    }
+    if(geometry.type==="Feature")geometry=geometry.geometry;
+    if(!geometry?.type||!Array.isArray(geometry.coordinates))return null;
+    return geometry;
+  }
+
+  function pointOnSegment(x,y,x1,y1,x2,y2,epsilon=1e-10){
+    const cross=(x-x1)*(y2-y1)-(y-y1)*(x2-x1);
+    if(Math.abs(cross)>epsilon)return false;
+    const dot=(x-x1)*(x2-x1)+(y-y1)*(y2-y1);
+    if(dot<0)return false;
+    const lengthSquared=(x2-x1)**2+(y2-y1)**2;
+    return dot<=lengthSquared;
+  }
+
+  function inRing(x,y,ring){
+    if(!Array.isArray(ring)||ring.length<3)return false;
+    let inside=false;
+    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+      const [xi,yi]=ring[i];
+      const [xj,yj]=ring[j];
+
+      if(pointOnSegment(x,y,xi,yi,xj,yj))return true;
+
+      const intersects=((yi>y)!==(yj>y)) &&
+        (x < ((xj-xi)*(y-yi))/((yj-yi)||Number.EPSILON)+xi);
+      if(intersects)inside=!inside;
+    }
+    return inside;
+  }
+
+  function inPolygonCoordinates(x,y,rings){
+    if(!Array.isArray(rings)||!rings.length)return false;
+    if(!inRing(x,y,rings[0]))return false;
+    for(let i=1;i<rings.length;i++){
+      if(inRing(x,y,rings[i]))return false;
+    }
+    return true;
+  }
+
+  function geometryContains(geometry,x,y){
+    const g=normalizeGeometry(geometry);
+    if(!g)return false;
+    if(g.type==="Polygon")return inPolygonCoordinates(x,y,g.coordinates);
+    if(g.type==="MultiPolygon"){
+      return g.coordinates.some(polygon=>inPolygonCoordinates(x,y,polygon));
+    }
+    return false;
+  }
+
+  function ringArea(ring){
+    if(!Array.isArray(ring)||ring.length<3)return Number.POSITIVE_INFINITY;
+    let sum=0;
+    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+      sum+=ring[j][0]*ring[i][1]-ring[i][0]*ring[j][1];
+    }
+    return Math.abs(sum/2);
+  }
+
+  function geometryArea(geometry){
+    const g=normalizeGeometry(geometry);
+    if(!g)return Number.POSITIVE_INFINITY;
+    if(g.type==="Polygon")return ringArea(g.coordinates[0]);
+    if(g.type==="MultiPolygon"){
+      return g.coordinates.reduce((total,polygon)=>total+ringArea(polygon[0]),0);
+    }
+    return Number.POSITIVE_INFINITY;
+  }
+
+  function findArea(lat,lon){
+    const found=areas.filter(feature=>{
+      const properties=feature.properties||{};
+      return properties.active!==false && geometryContains(feature.geometry,lon,lat);
+    });
+
+    const risk=found.find(feature=>feature.properties?.risk===true);
+    if(risk)return risk;
+
+    return found
+      .filter(feature=>feature.properties?.risk!==true)
+      .sort((a,b)=>(a.area??geometryArea(a.geometry))-(b.area??geometryArea(b.geometry)))[0]||null;
+  }
   function distance(lat1,lon1,lat2,lon2){const R=6371,r=x=>x*Math.PI/180,d1=r(lat2-lat1),d2=r(lon2-lon1),a=Math.sin(d1/2)**2+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(d2/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
   const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v);
   function show(f,lat,lon){atual={lat,lon};if(marker)marker.remove();marker=L.marker([lat,lon]).addTo(map).bindPopup("Endereço consultado").openPopup();map.setView([lat,lon],14);const km=distance(cfg.DISTRIBUTION_CENTER.lat,cfg.DISTRIBUTION_CENTER.lon,lat,lon);ui.resultado.classList.remove("oculto","erro");if(!f||f.properties.risk){ui.resultado.classList.add("erro");ui.situacao.textContent=f?"Área de risco":"Fora da cobertura";ui.titulo.textContent="Entrega indisponível";ui.icone.textContent="!";ui.frete.textContent=f?"Não atendemos":"Indisponível";ui.regiao.textContent=f?.properties.label||"Fora das áreas cadastradas";ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent="Não aplicável";ui.observacao.textContent=f?.properties.description||"Consulte a Produtos Yuba.";return}ui.situacao.textContent="Entrega disponível";ui.titulo.textContent="Endereço dentro da cobertura";ui.icone.textContent="✓";ui.frete.textContent=money(f.properties.price);ui.regiao.textContent=f.properties.label;ui.distancia.textContent=`${km.toFixed(1).replace(".",",")} km`;ui.tempo.textContent=`aprox. ${Math.max(20,Math.round(km/22*60+15))} min`;ui.observacao.textContent="Distância em linha reta e tempo aproximado; o trajeto real pode variar."}
   function loading(v,m=""){ui.buscar.disabled=v;ui.gps.disabled=v;ui.buscar.textContent=v?"Aguarde...":"🚚 Calcular frete";ui.status.textContent=m}
-  ui.buscar.onclick=async()=>{const q=ui.endereco.value.trim();if(!q)return ui.endereco.focus();loading(true,"Localizando endereço...");try{const l=await geocode(q);ui.endereco.value=l.address;show(findArea(l.lat,l.lon),l.lat,l.lon);ui.status.textContent="Consulta concluída."}catch(e){ui.status.textContent=e.message}finally{loading(false,ui.status.textContent)}};
+  ui.buscar.onclick=async()=>{const q=ui.endereco.value.trim();if(!q)return ui.endereco.focus();loading(true,"Localizando endereço...");try{const l=await geocode(q);ui.endereco.value=l.address;const area=findArea(l.lat,l.lon);show(area,l.lat,l.lon);ui.status.textContent=area?`Consulta concluída: ${area.properties.label||area.properties.name}.`:"Consulta concluída: endereço fora da cobertura."}catch(e){console.error(e);ui.status.textContent=e.message}finally{loading(false,ui.status.textContent)}};
   ui.endereco.onkeydown=e=>{if(e.key==="Enter")ui.buscar.click()};ui.limpar.onclick=()=>{ui.endereco.value="";ui.endereco.focus()};
   ui.gps.onclick=()=>{
     if(!navigator.geolocation){
