@@ -475,3 +475,253 @@ body.mapa-editor-body-bloqueado {
     min-height: 56px;
   }
 }
+
+
+/* v1.2.8 — melhoria exclusiva da página pública em celulares
+   O tamanho aprovado do mapa Editor visual (#mapa-admin) não foi alterado. */
+
+.relogio-digital {
+  min-width: 190px;
+  padding: 8px 14px;
+  color: #e9f7ff;
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 2px 2px 0 #002d22, 0 0 7px rgba(255,255,255,.22);
+}
+
+@media (max-width: 650px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .topo {
+    min-height: auto;
+    padding: 11px 13px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "marca relogio"
+      "marca admin";
+    align-items: center;
+    gap: 6px 10px;
+  }
+
+  .marca {
+    grid-area: marca;
+    min-width: 0;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .logo-img {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    object-fit: contain;
+  }
+
+  .marca > div {
+    min-width: 0;
+  }
+
+  .marca h1 {
+    margin: 0;
+    font-size: 1.28rem;
+    line-height: 1.08;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .marca p {
+    margin: 5px 0 0;
+    font-size: .78rem;
+  }
+
+  .relogio-digital {
+    grid-area: relogio;
+    min-width: 0;
+    padding: 2px 0;
+    font-size: 1.42rem;
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  .botao-admin {
+    grid-area: admin;
+    justify-self: end;
+    padding: 7px 10px;
+    border-radius: 9px;
+    font-size: .72rem;
+    line-height: 1;
+  }
+
+  .layout {
+    width: 100%;
+    max-width: none;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .painel,
+  .mapa-card {
+    width: 100%;
+    min-width: 0;
+    border-radius: 14px;
+  }
+
+  .bloco,
+  .resultado,
+  .mapa-card {
+    padding: 16px;
+  }
+
+  .bloco h2,
+  .mapa-card h2 {
+    margin-bottom: 16px;
+    font-size: 1.18rem;
+    line-height: 1.2;
+  }
+
+  .bloco label {
+    font-size: .78rem;
+  }
+
+  .campo-limpar input {
+    min-height: 48px;
+    padding-left: 12px;
+    font-size: .91rem;
+  }
+
+  .acoes {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .btn {
+    min-height: 48px;
+    padding: 10px 12px;
+    font-size: .9rem;
+  }
+
+  .status {
+    margin-top: 10px;
+    font-size: .82rem;
+  }
+
+  .resultado-cabecalho {
+    gap: 10px;
+  }
+
+  .resultado h2 {
+    margin: 8px 0 14px;
+    font-size: 1.13rem;
+  }
+
+  .icone {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
+
+  .grade > div {
+    padding: 14px;
+  }
+
+  .grade #frete {
+    font-size: 1.38rem;
+  }
+
+  .observacao {
+    margin: 10px 0;
+    padding: 11px;
+    font-size: .8rem;
+  }
+
+  .mapa-card {
+    order: 2;
+  }
+
+  #mapa {
+    width: 100%;
+    min-height: 430px;
+    height: 58vh;
+    max-height: 560px;
+    border-radius: 12px;
+  }
+
+  .mapa-rodape {
+    margin-top: 10px;
+    padding: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .mapa-rodape strong {
+    font-size: .84rem;
+  }
+
+  .mapa-rodape span {
+    font-size: .78rem;
+  }
+
+  .mapa-rodape .mini {
+    width: 100%;
+  }
+
+  dialog {
+    width: calc(100vw - 24px);
+    max-width: none;
+    padding: 22px 18px;
+  }
+
+  footer {
+    padding: 14px 12px;
+    font-size: .75rem;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 380px) {
+  .topo {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 9px 10px;
+  }
+
+  .logo-img {
+    width: 54px;
+    height: 54px;
+    flex-basis: 54px;
+  }
+
+  .marca h1 {
+    font-size: 1.08rem;
+  }
+
+  .relogio-digital {
+    font-size: 1.15rem;
+  }
+
+  .botao-admin {
+    font-size: .65rem;
+    padding: 6px 8px;
+  }
+
+  .layout {
+    padding: 7px;
+  }
+
+  .bloco,
+  .resultado,
+  .mapa-card {
+    padding: 13px;
+  }
+}
